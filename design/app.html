@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@500;700;900&family=Reggae+One&family=Yusei+Magic&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  ::-webkit-scrollbar{width:11px;height:11px;}
+  ::-webkit-scrollbar-thumb{background:rgba(32,26,23,.28);border-radius:8px;border:3px solid transparent;background-clip:content-box;}
+  textarea{font-family:inherit;}
+  @keyframes pop-in{0%{transform:scale(.86);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @keyframes ai-pulse{0%,100%{transform:scale(1);opacity:.85;}50%{transform:scale(1.08);opacity:1;}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#FFF6EA"/><g transform="translate(30 30)"><rect x="0" y="0" width="40" height="40" rx="9" fill="#FF6B35" stroke="#201A17" stroke-width="3" transform="rotate(-4 20 20)"/><text x="20" y="29" font-family="sans-serif" font-size="22" font-weight="900" fill="#fff" text-anchor="middle">約</text></g></svg></template>
+<div style="{{ rootStyle }}">
+
+  <!-- ===== TOP : project list ===== -->
+  <sc-if value="{{ showTop }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;background:var(--paper,#FFF6EA);">
+    <div style="position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:16px 30px;background:var(--paper,#FFF6EA);border-bottom:3px solid var(--line,#201A17);">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:42px;height:42px;border:3px solid var(--line,#201A17);border-radius:11px;background:var(--accent,#FF6B35);display:flex;align-items:center;justify-content:center;font-family:'Reggae One',cursive;color:#fff;font-size:24px;box-shadow:3px 3px 0 var(--line,#201A17);transform:rotate(-4deg);">約</div>
+        <div style="line-height:1;">
+          <div style="font-family:'Reggae One',cursive;font-size:22px;color:var(--ink,#201A17);">マンガ契約</div>
+          <div style="font-family:'Zen Maru Gothic';font-size:11px;letter-spacing:2px;color:var(--accent,#FF6B35);font-weight:700;margin-top:2px;">CONTRACT → COMICS</div>
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:30px;padding:9px 16px;width:300px;font-family:'Zen Maru Gothic';color:#9a8f82;font-weight:700;font-size:14px;">
+        <span style="font-size:15px;">🔍</span> プロジェクトを検索…
+      </div>
+      <div onClick="{{ startWizard }}" style="display:flex;align-items:center;gap:8px;background:var(--accent,#FF6B35);color:#fff;border:3px solid var(--line,#201A17);border-radius:30px;padding:10px 22px;font-family:'Zen Maru Gothic';font-weight:900;font-size:15px;cursor:pointer;box-shadow:3px 3px 0 var(--line,#201A17);">＋ 新規プロジェクト</div>
+      <div style="width:42px;height:42px;border-radius:50%;border:3px solid var(--line,#201A17);background:var(--accent2,#18A999);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic';font-weight:900;color:#fff;font-size:16px;">M</div>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:34px 30px 80px;">
+      <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:6px;">
+        <h1 style="font-family:'Reggae One',cursive;font-size:34px;color:var(--ink,#201A17);margin:0;">プロジェクト</h1>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <sc-for list="{{ topTabs }}" as="tab" hint-placeholder-count="3">
+            <div onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <p style="font-family:'Zen Maru Gothic';color:#8a8073;font-weight:700;margin:0 0 26px;">むずかしい契約書を、よみやすい1ページ漫画に。</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px;">
+        <div onClick="{{ startWizard }}" style="border:3px dashed var(--accent,#FF6B35);border-radius:18px;min-height:286px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;background:rgba(255,107,53,.05);color:var(--accent,#FF6B35);font-family:'Zen Maru Gothic';font-weight:900;">
+          <div style="width:64px;height:64px;border-radius:50%;border:3px solid var(--accent,#FF6B35);display:flex;align-items:center;justify-content:center;font-size:34px;">＋</div>
+          <div style="font-size:16px;">新しく漫画化する</div>
+        </div>
+
+        <sc-for list="{{ projectCards }}" as="p" hint-placeholder-count="3">
+          <div onClick="{{ p.onOpen }}" style="border:3px solid var(--line,#201A17);border-radius:18px;overflow:hidden;cursor:pointer;background:#fff;box-shadow:5px 5px 0 var(--line,#201A17);display:flex;flex-direction:column;">
+            <div style="{{ p.coverStyle }}">
+              <div style="position:absolute;inset:0;background-image:radial-gradient(var(--tone,#cdbfa8) 1.4px,transparent 1.6px);background-size:9px 9px;opacity:.55;"></div>
+              <div style="position:absolute;right:-16px;bottom:-10px;width:96px;height:120px;background:rgba(32,26,23,.16);border-radius:48px 48px 0 0;"></div>
+              <div style="position:absolute;right:14px;bottom:62px;width:46px;height:46px;border-radius:50%;background:rgba(32,26,23,.22);"></div>
+              <div style="position:absolute;left:14px;top:14px;background:#fff;border:3px solid var(--line,#201A17);border-radius:16px;padding:8px 13px;max-width:72%;font-family:'Yomogi',cursive;font-weight:700;font-size:13.5px;color:var(--ink,#201A17);box-shadow:2px 2px 0 var(--line,#201A17);">{{ p.coverLine }}</div>
+              <div style="{{ p.badgeStyle }}">{{ p.templateName }}</div>
+            </div>
+            <div style="padding:15px 16px 17px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:16px;color:var(--ink,#201A17);">{{ p.title }}</div>
+                <div style="{{ p.statusStyle }}">{{ p.statusLabel }}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:9px;font-family:'Zen Maru Gothic';font-weight:700;font-size:12.5px;color:#9a8f82;">
+                <span>📄 {{ p.pageCount }}ページ</span><span>·</span><span>{{ p.updated }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== WIZARD ===== -->
+  <sc-if value="{{ showWizard }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;background:var(--paper,#FFF6EA);">
+    <div style="position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:16px 30px;background:var(--paper,#FFF6EA);border-bottom:3px solid var(--line,#201A17);">
+      <div onClick="{{ goTop }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--ink,#201A17);cursor:pointer;display:flex;align-items:center;gap:6px;">← もどる</div>
+      <div style="flex:1;display:flex;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:0;">
+          <sc-for list="{{ wizSteps }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;">
+              <div style="{{ s.dotStyle }}">{{ s.num }}</div>
+              <div style="{{ s.labelStyle }}">{{ s.label }}</div>
+              <sc-if value="{{ s.showBar }}" hint-placeholder-val="{{ true }}"><div style="{{ s.barStyle }}"></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="width:80px;"></div>
+    </div>
+
+    <div style="max-width:1000px;margin:0 auto;padding:38px 30px 90px;">
+      <!-- step 0 : purpose -->
+      <sc-if value="{{ wizStep0 }}" hint-placeholder-val="{{ false }}">
+        <h2 style="font-family:'Reggae One',cursive;font-size:30px;color:var(--ink,#201A17);text-align:center;margin:0 0 6px;">なんのために漫画化する？</h2>
+        <p style="font-family:'Zen Maru Gothic';font-weight:700;color:#8a8073;text-align:center;margin:0 0 34px;">目的にあわせて、おすすめの雛形と漫画のトーンが変わります。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+          <sc-for list="{{ purposeCards }}" as="c" hint-placeholder-count="3">
+            <div onClick="{{ c.onSelect }}" style="{{ c.cardStyle }}">
+              <div style="{{ c.iconStyle }}">{{ c.icon }}</div>
+              <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:18px;color:var(--ink,#201A17);margin-top:14px;">{{ c.title }}</div>
+              <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:13px;color:#8a8073;margin-top:8px;line-height:1.6;">{{ c.desc }}</div>
+              <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:12px;color:var(--accent,#FF6B35);margin-top:12px;">例：{{ c.examples }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- step 1 : template -->
+      <sc-if value="{{ wizStep1 }}" hint-placeholder-val="{{ false }}">
+        <h2 style="font-family:'Reggae One',cursive;font-size:30px;color:var(--ink,#201A17);text-align:center;margin:0 0 6px;">雛形をえらぶ</h2>
+        <p style="font-family:'Zen Maru Gothic';font-weight:700;color:#8a8073;text-align:center;margin:0 0 34px;">それぞれにデフォルトの漫画ページが用意されています。あとから差し替えできます。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+          <sc-for list="{{ templateCards }}" as="t" hint-placeholder-count="3">
+            <div onClick="{{ t.onSelect }}" style="{{ t.cardStyle }}">
+              <div style="position:relative;height:150px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:{{ t.cover }};">
+                <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(32,26,23,.32) 1.3px,transparent 1.5px);background-size:8px 8px;opacity:.5;"></div>
+                <div style="position:absolute;right:-10px;bottom:-14px;width:86px;height:108px;background:rgba(32,26,23,.18);border-radius:43px 43px 0 0;"></div>
+                <div style="position:absolute;left:12px;top:12px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:14px;padding:6px 11px;font-family:'Yomogi',cursive;font-weight:700;font-size:12px;color:var(--ink,#201A17);box-shadow:2px 2px 0 var(--line,#201A17);">{{ t.previewLine }}</div>
+                <sc-if value="{{ t.recommended }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:10px;top:10px;background:var(--accent2,#18A999);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:20px;padding:4px 11px;font-family:'Zen Maru Gothic';font-weight:900;font-size:11px;transform:rotate(5deg);">おすすめ</div></sc-if>
+              </div>
+              <div style="padding:15px 16px 18px;">
+                <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:17px;color:var(--ink,#201A17);">{{ t.name }}</div>
+                <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:12px;color:#9a8f82;margin-top:4px;">{{ t.sub }} · 全{{ t.pageCount }}ページ</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- step : manga style / touch -->
+      <sc-if value="{{ wizStepStyle }}" hint-placeholder-val="{{ false }}">
+        <h2 style="font-family:'Reggae One',cursive;font-size:30px;color:var(--ink,#201A17);text-align:center;margin:0 0 6px;">漫画のタッチをえらぶ</h2>
+        <p style="font-family:'Zen Maru Gothic';font-weight:700;color:#8a8073;text-align:center;margin:0 0 34px;">画風はあとから編集画面でいつでも切り替えられます。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+          <sc-for list="{{ styleCards }}" as="s" hint-placeholder-count="6">
+            <div onClick="{{ s.onSelect }}" style="{{ s.cardStyle }}">
+              <div style="position:relative;height:120px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;">
+                <div style="{{ s.bgStyle }}"></div>
+                <sc-if value="{{ s.hasTone }}" hint-placeholder-val="{{ true }}"><div style="{{ s.toneStyle }}"></div></sc-if>
+                <sc-if value="{{ s.hasFx }}" hint-placeholder-val="{{ false }}"><div style="{{ s.fxStyle }}"></div></sc-if>
+                <div style="{{ s.silStyle }}"></div>
+                <div style="position:absolute;left:11px;top:11px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:13px;padding:5px 10px;font-family:'Yomogi',cursive;font-weight:700;font-size:11.5px;color:var(--ink,#201A17);box-shadow:2px 2px 0 var(--line,#201A17);">{{ s.emoji }} {{ s.name }}</div>
+              </div>
+              <div style="padding:12px 14px 15px;">
+                <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:15px;color:var(--ink,#201A17);">{{ s.name }}</div>
+                <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:11.5px;color:#9a8f82;margin-top:4px;line-height:1.55;">{{ s.desc }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:30px;">
+          <div onClick="{{ goUploadStep }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:#fff;background:var(--accent,#FF6B35);border:3px solid var(--line,#201A17);border-radius:30px;padding:13px 32px;cursor:pointer;box-shadow:4px 4px 0 var(--line,#201A17);font-size:15px;">このタッチで進む →</div>
+        </div>
+      </sc-if>
+
+      <!-- step 2 : upload -->
+      <sc-if value="{{ wizStep2 }}" hint-placeholder-val="{{ false }}">
+        <h2 style="font-family:'Reggae One',cursive;font-size:30px;color:var(--ink,#201A17);text-align:center;margin:0 0 6px;">あなたの契約書をアップロード</h2>
+        <p style="font-family:'Zen Maru Gothic';font-weight:700;color:#8a8073;text-align:center;margin:0 0 32px;">AIが条文を読みとって、漫画のセリフに自動で流しこみます。</p>
+        <div style="max-width:640px;margin:0 auto;">
+          <div onClick="{{ fakeUpload }}" style="{{ dropStyle }}">
+            <sc-if value="{{ noFile }}" hint-placeholder-val="{{ true }}">
+              <div style="width:72px;height:72px;border-radius:50%;background:var(--accent,#FF6B35);border:3px solid var(--line,#201A17);display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;box-shadow:3px 3px 0 var(--line,#201A17);">⬆</div>
+              <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:18px;color:var(--ink,#201A17);margin-top:16px;">ここにファイルをドロップ</div>
+              <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:13px;color:#9a8f82;margin-top:6px;">PDF / Word / テキスト　（クリックでサンプルを読み込み）</div>
+            </sc-if>
+            <sc-if value="{{ hasFile }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="width:54px;height:66px;background:#fff;border:3px solid var(--line,#201A17);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:26px;">📄</div>
+                <div style="text-align:left;">
+                  <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:16px;color:var(--ink,#201A17);">{{ fileName }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:12.5px;color:var(--accent2,#18A999);margin-top:4px;">✓ 読み込み完了 · {{ fileClauses }}条を検出</div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;justify-content:center;gap:14px;margin-top:26px;">
+            <div onClick="{{ skipUpload }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--ink,#201A17);background:#fff;border:3px solid var(--line,#201A17);border-radius:30px;padding:12px 24px;cursor:pointer;">雛形のまま進む</div>
+            <div onClick="{{ goAnalyze }}" style="{{ analyzeBtnStyle }}">AIで解析する →</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- step 3 : analyze / mapping -->
+      <sc-if value="{{ wizStep3 }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ analyzing }}" hint-placeholder-val="{{ true }}">
+          <div style="text-align:center;padding:70px 0;">
+            <div style="width:96px;height:96px;margin:0 auto;border-radius:50%;background:var(--accent,#FF6B35);border:4px solid var(--line,#201A17);display:flex;align-items:center;justify-content:center;font-size:46px;color:#fff;box-shadow:5px 5px 0 var(--line,#201A17);animation:ai-pulse 1.1s ease-in-out infinite;">🤖</div>
+            <h2 style="font-family:'Reggae One',cursive;font-size:26px;color:var(--ink,#201A17);margin:26px 0 8px;">AIが条文を解析中…</h2>
+            <div style="font-family:'Yomogi',cursive;color:#8a8073;font-size:15px;">{{ analyzeMsg }}</div>
+            <div style="max-width:440px;height:18px;margin:26px auto 0;background:#fff;border:3px solid var(--line,#201A17);border-radius:20px;overflow:hidden;">
+              <div style="{{ progressStyle }}"></div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ analyzeDone }}" hint-placeholder-val="{{ false }}">
+          <h2 style="font-family:'Reggae One',cursive;font-size:28px;color:var(--ink,#201A17);text-align:center;margin:0 0 6px;">条文と漫画ページの対応</h2>
+          <p style="font-family:'Zen Maru Gothic';font-weight:700;color:#8a8073;text-align:center;margin:0 0 28px;">あなたの契約書の各条文を、どの漫画ページに割り当てたか確認できます。</p>
+          <div style="display:flex;flex-direction:column;gap:12px;max-width:780px;margin:0 auto;">
+            <sc-for list="{{ mapRows }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:14px;background:#fff;border:3px solid var(--line,#201A17);border-radius:16px;padding:13px 16px;box-shadow:3px 3px 0 var(--line,#201A17);">
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--accent,#FF6B35);">{{ m.no }} {{ m.title }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:12.5px;color:#7a7165;margin-top:3px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;">{{ m.text }}</div>
+                </div>
+                <div style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--accent,#FF6B35);font-size:20px;">→</div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:56px;height:42px;border:2.5px solid var(--line,#201A17);border-radius:8px;background:var(--panel,#ECE4D6);position:relative;overflow:hidden;">
+                    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(32,26,23,.3) 1px,transparent 1.2px);background-size:6px 6px;opacity:.6;"></div>
+                    <div style="position:absolute;left:4px;top:4px;width:24px;height:11px;background:#fff;border:1.5px solid var(--line,#201A17);border-radius:4px;"></div>
+                  </div>
+                  <div style="{{ m.confStyle }}">{{ m.conf }}%</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:30px;">
+            <div onClick="{{ goEdit }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:#fff;background:var(--accent,#FF6B35);border:3px solid var(--line,#201A17);border-radius:30px;padding:14px 34px;cursor:pointer;box-shadow:4px 4px 0 var(--line,#201A17);font-size:16px;">編集に進む ✏️</div>
+          </div>
+        </sc-if>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===== EDITOR ===== -->
+  <sc-if value="{{ showEdit }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100vh;display:flex;flex-direction:column;background:var(--paper,#FFF6EA);overflow:hidden;">
+    <!-- toolbar -->
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 22px;background:var(--paper,#FFF6EA);border-bottom:3px solid var(--line,#201A17);flex:none;">
+      <div onClick="{{ saveProject }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--ink,#201A17);cursor:pointer;">← 一覧</div>
+      <div style="width:2px;height:24px;background:rgba(32,26,23,.15);"></div>
+      <sc-if value="{{ titleEditing }}" hint-placeholder-val="{{ false }}">
+        <input value="{{ activeTitle }}" onChange="{{ onTitleChange }}" onBlur="{{ onTitleBlur }}" style="font-family:'Zen Maru Gothic';font-weight:900;font-size:16px;color:var(--ink,#201A17);border:2.5px solid var(--accent,#FF6B35);border-radius:8px;padding:4px 9px;outline:none;width:240px;background:#fff;"></input>
+      </sc-if>
+      <sc-if value="{{ titleNotEditing }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ startTitleEdit }}" title="クリックして名前を変更" style="font-family:'Zen Maru Gothic';font-weight:900;font-size:16px;color:var(--ink,#201A17);cursor:text;display:flex;align-items:center;gap:6px;">{{ activeTitle }} <span style="font-size:12px;opacity:.5;">✎</span></div>
+      </sc-if>
+      <div style="background:var(--accent,#FF6B35);color:#fff;border:2px solid var(--line,#201A17);border-radius:14px;padding:2px 9px;font-family:'Zen Maru Gothic';font-weight:900;font-size:11px;">{{ activeTemplateName }}</div>
+      <div style="flex:1;"></div>
+      <!-- layout toggle -->
+      <div style="display:flex;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:24px;overflow:hidden;font-family:'Zen Maru Gothic';font-weight:900;font-size:12.5px;">
+        <div onClick="{{ setDoc }}" style="{{ docTabStyle }}">契約書＋まんが</div>
+        <div onClick="{{ setPerClause }}" style="{{ perClauseTabStyle }}">1条を編集</div>
+      </div>
+      <div onClick="{{ toggleOriginal }}" style="{{ origToggleStyle }}">📜 元条文</div>
+      <div style="position:relative;">
+        <div onClick="{{ toggleStyleMenu }}" style="font-family:'Zen Maru Gothic';font-weight:900;font-size:12.5px;padding:9px 14px;border-radius:24px;border:2.5px solid var(--line,#201A17);cursor:pointer;background:#fff;color:var(--ink,#201A17);display:flex;align-items:center;gap:7px;">🎨 {{ activeStyleName }} <span style="font-size:9px;">▼</span></div>
+        <sc-if value="{{ styleMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;right:0;top:46px;z-index:50;background:#fff;border:3px solid var(--line,#201A17);border-radius:14px;padding:7px;width:216px;box-shadow:5px 5px 0 var(--line,#201A17);">
+            <sc-for list="{{ styleMenu }}" as="s" hint-placeholder-count="6">
+              <div onClick="{{ s.onPick }}" style="{{ s.rowStyle }}"><span style="font-size:15px;">{{ s.emoji }}</span><span style="flex:1;">{{ s.name }}</span><sc-if value="{{ s.active }}" hint-placeholder-val="{{ false }}"><span style="color:var(--accent2,#18A999);font-weight:900;">✓</span></sc-if></div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div onClick="{{ saveProject }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:#fff;background:var(--accent2,#18A999);border:3px solid var(--line,#201A17);border-radius:24px;padding:9px 22px;cursor:pointer;box-shadow:3px 3px 0 var(--line,#201A17);">保存</div>
+    </div>
+
+    <div style="flex:1;display:flex;min-height:0;">
+      <!-- page rail -->
+      <div style="width:182px;flex:none;border-right:3px solid var(--line,#201A17);background:#fff;overflow-y:auto;padding:14px 12px;">
+        <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;color:#9a8f82;margin-bottom:10px;letter-spacing:1px;">ページ ({{ pageTotal }})</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <sc-for list="{{ pageThumbs }}" as="t" hint-placeholder-count="4">
+            <div style="{{ t.wrapStyle }}">
+              <div onClick="{{ t.onSelect }}" style="{{ t.thumbStyle }}">
+                <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(32,26,23,.28) 1px,transparent 1.2px);background-size:7px 7px;opacity:.55;"></div>
+                <div style="position:absolute;left:6px;top:6px;width:34px;height:14px;background:#fff;border:1.5px solid var(--line,#201A17);border-radius:5px;"></div>
+                <div style="position:absolute;right:6px;bottom:18px;width:30px;height:30px;border-radius:50%;background:rgba(32,26,23,.2);"></div>
+                <div style="position:absolute;left:0;bottom:0;right:0;background:rgba(32,26,23,.78);color:#fff;font-family:'Zen Maru Gothic';font-weight:900;font-size:9.5px;padding:3px 6px;">{{ t.no }} {{ t.title }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <div onClick="{{ t.onUp }}" style="{{ t.upStyle }}">▲</div>
+                <div onClick="{{ t.onDown }}" style="{{ t.downStyle }}">▼</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- canvas -->
+      <div style="flex:1;min-width:0;overflow-y:auto;padding:30px;display:flex;flex-direction:column;align-items:center;gap:28px;background:repeating-linear-gradient(45deg,rgba(32,26,23,.018) 0 12px,transparent 12px 24px),var(--paper,#FFF6EA);">
+        <sc-if value="{{ isDoc }}" hint-placeholder-val="{{ true }}">
+          <div style="width:min(100%,560px);background:#fff;border:3px solid var(--line,#201A17);border-radius:12px;padding:20px 24px;box-shadow:5px 5px 0 var(--line,#201A17);">
+            <div style="font-family:'Reggae One',cursive;font-size:21px;color:var(--ink,#201A17);text-align:center;">{{ activeTitle }}</div>
+            <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:12px;color:#9a8f82;text-align:center;margin-top:6px;">契約書の本文のあいだに、各条文をまんがで解説しています</div>
+          </div>
+        </sc-if>
+        <sc-for list="{{ canvasPages }}" as="pg" hint-placeholder-count="1">
+          <div style="width:min(100%,560px);display:flex;flex-direction:column;align-items:stretch;">
+            <sc-if value="{{ pg.showDocText }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#fff;border:2.5px solid var(--line,#201A17);border-radius:12px 12px 0 0;border-bottom:none;padding:16px 22px 14px;">
+                <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:15px;color:var(--ink,#201A17);">{{ pg.no }}　{{ pg.title }}</div>
+                <sc-if value="{{ pg.editingClause }}" hint-placeholder-val="{{ false }}">
+                  <textarea value="{{ pg.clauseText }}" onChange="{{ pg.onClauseChange }}" onBlur="{{ pg.onClauseBlur }}" style="width:100%;min-height:80px;border:none;border-top:2px solid var(--accent,#FF6B35);padding:8px 0 4px;font-family:'Zen Maru Gothic';font-weight:500;font-size:13px;color:#3f372e;line-height:1.95;resize:vertical;outline:none;background:transparent;margin-top:8px;"></textarea>
+                </sc-if>
+                <sc-if value="{{ pg.notEditingClause }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ pg.onClauseEdit }}" title="クリックして条文を編集" style="font-family:'Zen Maru Gothic';font-weight:500;font-size:13px;color:#3f372e;line-height:1.95;margin-top:8px;text-align:justify;cursor:text;">{{ pg.clauseText }}<span style="margin-left:4px;font-size:10px;color:#bcb0a5;">✎</span></div>
+                </sc-if>
+              </div>
+              <div onClick="{{ pg.onJump }}" style="{{ pg.mangaLabelStyle }}">{{ pg.mangaLabel }}</div>
+            </sc-if>
+            <div ref="{{ pg.canvasRef }}" style="{{ pg.canvasStyle }}">
+              <!-- koma grid (4+ panels), style-aware, each with a drop-in image -->
+              <div style="{{ pg.komaGridStyle }}">
+                <sc-for list="{{ pg.komas }}" as="k" hint-placeholder-count="4">
+                  <div style="{{ k.cellStyle }}">
+                    <div style="{{ k.bgStyle }}"></div>
+                    <sc-if value="{{ k.hasTone }}" hint-placeholder-val="{{ true }}"><div style="{{ k.toneStyle }}"></div></sc-if>
+                    <sc-if value="{{ k.hasFx }}" hint-placeholder-val="{{ false }}"><div style="{{ k.fxStyle }}"></div></sc-if>
+                    <div style="{{ k.silBodyStyle }}"></div>
+                    <div style="{{ k.silHeadStyle }}"></div>
+                    <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ k.slotId }}" shape="rect" placeholder="画像をドロップ" style="position:absolute;inset:0;width:100%;height:100%;" hint-size="100%,100%"></x-import>
+                    <div style="{{ k.numStyle }}">{{ k.num }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="{{ pg.frameStyle }}"></div>
+
+              <!-- bubbles -->
+              <sc-for list="{{ pg.bubbles }}" as="b" hint-placeholder-count="3">
+                <div onMouseDown="{{ b.onDown }}" onDoubleClick="{{ b.onEdit }}" style="{{ b.boxStyle }}">
+                  <sc-if value="{{ b.hasTail }}" hint-placeholder-val="{{ false }}"><div style="{{ b.tailStyle }}"></div></sc-if>
+                  <sc-if value="{{ b.editing }}" hint-placeholder-val="{{ false }}">
+                    <textarea value="{{ b.text }}" onChange="{{ b.onText }}" onBlur="{{ b.onBlur }}" onMouseDown="{{ b.stop }}" style="{{ b.taStyle }}"></textarea>
+                  </sc-if>
+                  <sc-if value="{{ b.notEditing }}" hint-placeholder-val="{{ true }}">
+                    <div style="{{ b.textStyle }}">{{ b.text }}</div>
+                  </sc-if>
+                  <sc-if value="{{ b.selected }}" hint-placeholder-val="{{ false }}">
+                    <div onMouseDown="{{ b.onResize }}" style="position:absolute;right:-9px;bottom:-9px;width:18px;height:18px;background:var(--accent,#FF6B35);border:2.5px solid var(--line,#201A17);border-radius:5px;cursor:nwse-resize;z-index:9;"></div>
+                    <div onClick="{{ b.onDelete }}" style="position:absolute;right:-9px;top:-12px;width:22px;height:22px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:#d6453b;font-weight:900;z-index:9;">×</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- inspector -->
+      <div style="width:312px;flex:none;border-left:3px solid var(--line,#201A17);background:#fff;display:flex;flex-direction:column;overflow:hidden;">
+        <!-- ===== Progress chart (non-scrolling top) ===== -->
+        <div style="flex:none;background:var(--paper,#FFF6EA);border-bottom:2.5px solid var(--line,#201A17);padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+            <span style="font-size:13px;">⚙️</span>
+            <span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:11px;letter-spacing:.5px;color:var(--ink,#201A17);">プロジェクト設定</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <sc-for list="{{ settingsSteps }}" as="ss" hint-placeholder-count="3">
+              <div onClick="{{ ss.onClick }}" style="{{ ss.rowStyle }}">
+                <div style="{{ ss.dotStyle }}">{{ ss.num }}</div>
+                <div style="flex:1;min-width:0;line-height:1.25;">
+                  <div style="font-family:'Zen Maru Gothic';font-size:9.5px;font-weight:700;color:#9a8f82;">{{ ss.label }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-size:12px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink,#201A17);">{{ ss.emoji }} {{ ss.value }}</div>
+                </div>
+                <div style="font-family:'Zen Maru Gothic';font-size:10.5px;font-weight:900;color:var(--accent,#FF6B35);flex:none;">変更→</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <!-- ===== Scrollable inspector content ===== -->
+        <div style="flex:1;overflow-y:auto;padding:18px 18px 40px;">
+        <sc-if value="{{ showOriginal }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="font-size:15px;">📜</span><span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);">元の条文</span></div>
+            <div style="background:#f7f2e8;border:2.5px solid var(--line,#201A17);border-radius:12px;padding:13px 14px;">
+              <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;color:var(--accent,#FF6B35);">{{ curNo }} {{ curTitle }}</div>
+              <textarea value="{{ curClauseText }}" onChange="{{ onClauseTextChange }}" placeholder="条文テキストを入力…" style="width:100%;min-height:80px;background:transparent;border:1.5px solid rgba(32,26,23,.2);border-radius:8px;padding:8px 10px;font-family:'Zen Maru Gothic';font-weight:500;font-size:12.5px;color:#4a4138;line-height:1.75;margin-top:8px;resize:vertical;outline:none;display:block;"></textarea>
+            </div>
+            <div onClick="{{ syncBubblesFromClause }}" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ink,#201A17);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:10px;padding:10px 14px;font-family:'Zen Maru Gothic';font-weight:900;font-size:12.5px;cursor:pointer;box-shadow:2px 2px 0 var(--line,#201A17);">🔄 吹き出しに反映する</div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;"><span style="font-size:15px;">💬</span><span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);">選択中の吹き出し</span></div>
+        <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+          <textarea value="{{ selText }}" onChange="{{ onSelTextChange }}" style="width:100%;min-height:96px;border:2.5px solid var(--line,#201A17);border-radius:12px;padding:11px 12px;font-family:'Yomogi',cursive;font-size:14px;color:var(--ink,#201A17);resize:vertical;line-height:1.6;"></textarea>
+          <div onClick="{{ regenerate }}" style="margin-top:11px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent,#FF6B35);color:#fff;border:3px solid var(--line,#201A17);border-radius:12px;padding:11px;font-family:'Zen Maru Gothic';font-weight:900;font-size:13.5px;cursor:pointer;box-shadow:3px 3px 0 var(--line,#201A17);">🤖 AIで言い換え再生成</div>
+          <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:11px;color:#9a8f82;text-align:center;margin-top:7px;">トーン：{{ regenToneLabel }}</div>
+        </sc-if>
+        <sc-if value="{{ noSelection }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#f7f2e8;border:2.5px dashed rgba(32,26,23,.3);border-radius:12px;padding:18px;text-align:center;font-family:'Zen Maru Gothic';font-weight:700;font-size:12.5px;color:#9a8f82;line-height:1.7;">吹き出しをクリックで選択。<br>ダブルクリックで直接編集できます。</div>
+        </sc-if>
+
+        <div onClick="{{ addBubble }}" style="margin-top:18px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:var(--ink,#201A17);border:3px solid var(--line,#201A17);border-radius:12px;padding:11px;font-family:'Zen Maru Gothic';font-weight:900;font-size:13.5px;cursor:pointer;">＋ 吹き出しを追加</div>
+
+        <div style="margin-top:22px;border-top:2px dashed rgba(32,26,23,.18);padding-top:16px;">
+          <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);margin-bottom:10px;">セリフのタイプ</div>
+          <div style="display:flex;gap:8px;">
+            <sc-for list="{{ kindOptions }}" as="k" hint-placeholder-count="2">
+              <div onClick="{{ k.onClick }}" style="{{ k.style }}">{{ k.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+        </div><!-- end scrollable inspector content -->
+      </div><!-- end inspector -->
+    </div><!-- end 3-col layout -->
+    <!-- ===== Settings change modal ===== -->
+    <sc-if value="{{ showSettingModal }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSettingStep }}" style="position:fixed;inset:0;z-index:100;background:rgba(32,26,23,.6);display:flex;align-items:center;justify-content:center;padding:30px;">
+        <div onClick="{{ stopSettingProp }}" style="background:var(--paper,#FFF6EA);border:3px solid var(--line,#201A17);border-radius:20px;padding:28px;max-width:720px;width:100%;box-shadow:8px 8px 0 var(--line,#201A17);max-height:85vh;overflow-y:auto;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+            <h2 style="font-family:'Reggae One',cursive;font-size:24px;color:var(--ink,#201A17);margin:0;">{{ settingModalTitle }}</h2>
+            <div onClick="{{ closeSettingStep }}" style="width:36px;height:36px;border:2.5px solid var(--line,#201A17);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;background:#fff;">×</div>
+          </div>
+          <div style="{{ settingModalGrid }}">
+            <sc-for list="{{ settingModalCards }}" as="mc" hint-placeholder-count="3">
+              <div onClick="{{ mc.onPick }}" style="{{ mc.cardStyle }}">
+                <div style="{{ mc.coverStyle }}">
+                  <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(32,26,23,.22) 1.2px,transparent 1.4px);background-size:8px 8px;opacity:.5;pointer-events:none;"></div>
+                  <div style="position:absolute;left:10px;top:10px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:12px;padding:5px 10px;font-family:'Yomogi',cursive;font-size:11px;color:var(--ink,#201A17);box-shadow:2px 2px 0 var(--line,#201A17);max-width:75%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ mc.preview }}</div>
+                  <sc-if value="{{ mc.active }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:8px;top:8px;background:var(--accent2,#18A999);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:16px;padding:3px 8px;font-family:'Zen Maru Gothic';font-weight:900;font-size:10px;">現在</div></sc-if>
+                </div>
+                <div style="padding:10px 12px 12px;">
+                  <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:14px;color:var(--ink,#201A17);">{{ mc.name }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:11px;color:#9a8f82;margin-top:2px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ mc.sub }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div><!-- end main editor div -->
+  </sc-if>
+
+  <!-- ===== SAVE ===== -->
+  <sc-if value="{{ showSave }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;background:var(--paper,#FFF6EA);display:flex;align-items:center;justify-content:center;padding:30px;">
+    <div style="text-align:center;max-width:520px;animation:pop-in .4s ease;">
+      <div style="width:120px;height:120px;margin:0 auto;border-radius:50%;background:var(--accent2,#18A999);border:5px solid var(--line,#201A17);display:flex;align-items:center;justify-content:center;font-size:62px;box-shadow:6px 6px 0 var(--line,#201A17);animation:bob 2s ease-in-out infinite;">🎉</div>
+      <h2 style="font-family:'Reggae One',cursive;font-size:32px;color:var(--ink,#201A17);margin:28px 0 8px;">保存しました！</h2>
+      <p style="font-family:'Yomogi',cursive;font-size:16px;color:#8a8073;margin:0 0 32px;line-height:1.7;">「{{ activeTitle }}」を{{ pageTotal }}ページの漫画として保存しました。</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <div onClick="{{ goTop }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:#fff;background:var(--accent,#FF6B35);border:3px solid var(--line,#201A17);border-radius:30px;padding:13px 28px;cursor:pointer;box-shadow:4px 4px 0 var(--line,#201A17);">プロジェクト一覧へ</div>
+        <div onClick="{{ backToEdit }}" style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--ink,#201A17);background:#fff;border:3px solid var(--line,#201A17);border-radius:30px;padding:13px 28px;cursor:pointer;">編集に戻る</div>
+        <div style="font-family:'Zen Maru Gothic';font-weight:900;color:var(--ink,#201A17);background:#fff;border:3px solid var(--line,#201A17);border-radius:30px;padding:13px 28px;cursor:pointer;">⬇ PDFで書き出し</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:60;background:var(--ink,#201A17);color:#fff;border-radius:30px;padding:12px 24px;font-family:'Zen Maru Gothic';font-weight:900;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:pop-in .25s ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:760},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pop&quot;,&quot;pastel&quot;,&quot;mono&quot;],&quot;default&quot;:&quot;pop&quot;,&quot;tsType&quot;:&quot;'pop'|'pastel'|'mono'&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.PURPOSES = [
+      {id:'trouble', icon:'🛡️', color:'#FF6B35', title:'トラブル削減', desc:'解約・返金・禁止事項など、もめやすい規定を誤解なく伝える。', examples:'中途解約／キャンセル規定・禁止事項', recs:['riyou','gyomu']},
+      {id:'conversion', icon:'📈', color:'#18A999', title:'成約率向上', desc:'重要事項やライトな利用規約を、わかりやすく見せて不安をなくす。', examples:'重要事項説明書・SaaS利用規約', recs:['gyomu','riyou']},
+      {id:'internal', icon:'🔐', color:'#7C5CFC', title:'社内リスクヘッジ', desc:'入社時のNDAや副業規程を、社員にしっかり理解してもらう。', examples:'NDA・副業規程・SNSガイドライン', recs:['nda']},
+    ];
+    this.TEMPLATES = {
+      gyomu:{ id:'gyomu', name:'業務委託契約書', sub:'Service Agreement', cover:'#FFE4C9', tone:'#e0b98a',
+        clauses:[
+          {no:'第1条', title:'業務の内容', text:'甲は乙に対し、別紙に定める業務（以下「本業務」という。）を委託し、乙はこれを受託する。', t:['まずは「何をお願いするか」をハッキリさせる条文。','今回おねがいしたいのは、別紙にまとめた“この作業”です！','なるほど、ここに書いてある範囲をやればOKなんですね。','範囲がハッキリ＝あとで「言った言わない」が起きにくい！']},
+          {no:'第3条', title:'報酬・支払時期', text:'本業務の報酬は月額金30万円とし、甲は乙に対し、当月分を翌月末日までに支払うものとする。', t:['お金の話。いくらを・いつ払うか。','報酬は月30万円、翌月末までにお振込みします。','支払いタイミングが決まってると安心ですね！','これで請求もスムーズ。お互いモヤモヤなし！']},
+          {no:'第6条', title:'再委託', text:'乙は、甲の事前の書面による承諾を得た場合に限り、本業務の全部又は一部を第三者に再委託することができる。', t:['他の人にお願いし直してもいい？という条文。','勝手に外注はNG。やるなら事前に書面で相談を。','じゃあ手伝ってもらう時は必ず確認しますね。','チームで動くときのルールも、これで安心。']},
+          {no:'第8条', title:'秘密保持', text:'乙は、本業務遂行に関連して知り得た甲の秘密情報を、第三者に開示又は漏洩してはならない。', t:['仕事で知った秘密は守ってね、という約束。','業務で知った情報は外に出さないでくださいね。','もちろん。社外には一切話しません！','信頼の土台。守るほど次の仕事につながる！']},
+          {no:'第11条', title:'契約の解除', text:'当事者の一方が本契約に違反し、相当の期間を定めた催告後も是正されない場合、相手方は本契約を解除できる。', t:['約束が守られない時に「やめる」ためのルール。','違反があれば一度お知らせ→直らなければ解除できます。','ちゃんと猶予があるから、いきなりではないんですね。','段階があるから、お互いフェアに進められる。']},
+        ]},
+      nda:{ id:'nda', name:'秘密保持契約（NDA）', sub:'Non-Disclosure Agreement', cover:'#E3DAFB', tone:'#b3a3e6',
+        clauses:[
+          {no:'第1条', title:'秘密情報の定義', text:'「秘密情報」とは、本目的のために開示当事者が相手方に開示する技術上又は営業上の一切の情報をいう。', t:['まず「どこからが秘密？」をはっきりさせる。','業務で受け取る技術や営業の情報は、ぜんぶ秘密あつかいです。','どれが秘密か最初に決まってると迷わないね。','線引きが最初にあると、毎回ヒヤヒヤしなくて済む！']},
+          {no:'第2条', title:'目的外使用の禁止', text:'受領当事者は、秘密情報を本目的以外のために使用してはならない。', t:['もらった情報は「この仕事のためだけ」に使う。','他のことに流用するのはダメ、ということですね。','うん、お預かりした情報は目的の範囲だけで使います。','「この仕事のため」だけ。シンプルで覚えやすい！']},
+          {no:'第4条', title:'複製・開示の制限', text:'受領当事者は、開示当事者の事前の書面承諾なく秘密情報を複製し、又は第三者に開示してはならない。', t:['勝手にコピー・他人に見せるのはNG。','コピーや共有が必要なら、まず書面でOKをもらってね。','社内でも見せる範囲はしぼります！','ひと声かける習慣で、事故はぐっと減る！']},
+          {no:'第6条', title:'違反時の措置', text:'受領当事者が本契約に違反した場合、開示当事者は差止め及び損害賠償を請求することができる。', t:['約束を破ったらどうなるか、という条文。','もし漏らしてしまうと、差止めや賠償の対象になります。','責任が大きい…気をつけます！','だからこそ、最初の約束をしっかり守ろう。']},
+        ]},
+      riyou:{ id:'riyou', name:'利用規約・プライバシーポリシー', sub:'Terms of Service', cover:'#CFEDE4', tone:'#8fcdbd',
+        clauses:[
+          {no:'第3条', title:'禁止事項', text:'ユーザーは、本サービスの利用にあたり、法令違反・他者の権利侵害・不正アクセス等の行為をしてはならない。', t:['やってはいけないことリスト。','迷惑行為や不正アクセスはNGです。みんなが安心して使うために！','ルールが明確だと逆に使いやすいかも。','ルールはみんなを守るため。気持ちよく使おう！']},
+          {no:'第5条', title:'利用停止', text:'当社は、ユーザーが本規約に違反した場合、事前の通知なくアカウントを停止することができる。', t:['ルール違反するとアカウントが止まることがある。','悪質な違反は、予告なく利用停止になることもあります。','ちゃんと守って使えば大丈夫ってことね。','普通に使ってればまず平気。安心して！']},
+          {no:'第8条', title:'中途解約・返金', text:'ユーザーは所定の手続により中途解約できる。既に支払われた利用料金は、原則として返金しない。', t:['途中でやめる時のお金の話。','解約はいつでもOK。ただ、支払い済みのぶんは原則もどりません。','解約のしかたが書いてあると安心だね。','辞めどきも最初にわかると、始めやすい！']},
+          {no:'第10条', title:'免責事項', text:'当社は、本サービスの中断・データ消失等によりユーザーに生じた損害について、一切の責任を負わない。', t:['「ここまでは保証できません」という線引き。','不具合での損害は責任を負いかねます、という部分です。','限界がはっきりしてるのは正直で助かるかも。','できること・できないことが正直＝信頼できる。']},
+        ]},
+    };
+    // 4 bubbles → one per koma (2x2 grid)
+    this.POS = [
+      {x:3,  y:4,  w:40, kind:'narration'},
+      {x:55, y:7,  w:40, kind:'speech'},
+      {x:4,  y:55, w:42, kind:'speech'},
+      {x:54, y:57, w:41, kind:'speech'},
+    ];
+    this._idc = 0;
+    const mk = (tid, title, status, updated, style) => ({ id:'pj'+(++this._idc), title, template:tid, status, updated, style:style||'shounen', pages:this.buildPages(tid) });
+    this.state = {
+      screen:'top',
+      topTab:'all',
+      projects:[
+        mk('gyomu','株式会社ABC 業務委託', 'done', '2日前', 'shounen'),
+        mk('nda','新入社員むけ NDA 2026', 'draft', '今日', 'gekiga'),
+        mk('riyou','◯◯スクール 利用規約 v2', 'done', '先週', 'honobono'),
+      ],
+      wiz:{ purpose:null, template:null, style:'shounen', fileName:null, fileClauses:0 },
+      analyzing:false, analyzeDone:false, progress:0, analyzeMsg:'条文を抽出しています…',
+      active:null, activeId:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null, settingStep:null,
+      showOriginal:true, layoutMode:'doc', drag:null, toast:null, styleMenuOpen:false,
+    };
+    this._refs = {};
+  }
+
+  // ---------- helpers ----------
+  uid(){ return 'b'+(++this._idc)+'_'+Math.floor(Math.random()*9999); }
+  buildPages(tid){
+    const tpl = this.TEMPLATES[tid];
+    return tpl.clauses.map((c, ci) => ({
+      id:'pg'+ci+'_'+this.uid(),
+      no:c.no, title:c.title, clauseText:c.text,
+      bubbles: this.POS.map((p, i) => ({
+        id:this.uid(), text:c.t[i] || '…', base:c.t[i] || '…', vi:0,
+        x:p.x, y:p.y, w:p.w, kind:p.kind,
+      })),
+    }));
+  }
+  theme(){
+    const th = this.props.theme || 'pop';
+    if(th==='pastel') return {paper:'#FDF4FA',ink:'#3F3550',accent:'#C06BE6',accent2:'#3FB8C9',panel:'#EFE6F4',tone:'#cdb8da',line:'#3F3550',bubble:'#ffffff'};
+    if(th==='mono') return {paper:'#F4F3EF',ink:'#16140F',accent:'#16140F',accent2:'#5b554a',panel:'#E4E1D8',tone:'#8c857a',line:'#16140F',bubble:'#ffffff'};
+    return {paper:'#FFF6EA',ink:'#201A17',accent:'#FF6B35',accent2:'#18A999',panel:'#ECE4D6',tone:'#c9bba3',line:'#201A17',bubble:'#ffffff'};
+  }
+
+  // ---------- manga touch / art styles ----------
+  mangaStyles(){
+    return [
+      {id:'shounen',  emoji:'🔥', name:'少年漫画風',   desc:'迫力の集中線とベタ。アツく伝える。'},
+      {id:'shoujo',   emoji:'✨', name:'少女漫画風',   desc:'やわらか線にキラキラ。やさしい印象。'},
+      {id:'yonkoma',  emoji:'😆', name:'4コマ・ギャグ', desc:'シンプルでテンポよく。クスッと。'},
+      {id:'honobono', emoji:'🐥', name:'ほのぼの',     desc:'まるっこくてかわいい。親しみ重視。'},
+      {id:'gekiga',   emoji:'🎭', name:'劇画・リアル',  desc:'濃いめのトーンで重厚に魅せる。'},
+      {id:'zukai',    emoji:'📊', name:'ビジネス図解',  desc:'すっきりフラット。資料向け。'},
+    ];
+  }
+  styleName(id){ const s=this.mangaStyles().find(x=>x.id===id); return s?s.name:'少年漫画風'; }
+  styleDef(id){
+    const D={
+      shounen:{ panel:'#F3ECDD', tone:{c:'rgba(32,26,23,.34)',s:1.7,o:.5}, fx:'speed', sil:'rgba(32,26,23,.24)', headR:'50%', bodyR:'46% 46% 0 0', frame:'5px' },
+      shoujo:{  panel:'linear-gradient(135deg,#FFF0F6,#F2ECFF)', tone:{c:'rgba(192,107,230,.22)',s:1.3,o:.55}, fx:'sparkle', sil:'rgba(124,92,252,.16)', headR:'50%', bodyR:'55% 55% 30% 30%', frame:'4px' },
+      yonkoma:{ panel:'#FFFDF4', tone:null, fx:'none', sil:'rgba(32,26,23,.15)', headR:'50%', bodyR:'40% 40% 0 0', frame:'5px' },
+      honobono:{panel:'#FFF8EC', tone:{c:'rgba(224,185,138,.55)',s:2.4,o:.5}, fx:'none', sil:'rgba(32,26,23,.13)', headR:'50%', bodyR:'60% 60% 45% 45%', frame:'5px' },
+      gekiga:{  panel:'#DAD3C4', tone:{c:'rgba(20,18,15,.42)',s:1.1,o:.6}, fx:'hatch', sil:'rgba(20,18,15,.4)', headR:'50%', bodyR:'44% 44% 0 0', frame:'6px' },
+      zukai:{   panel:'#EBF3F2', tone:'grid', fx:'none', sil:'rgba(24,169,153,.2)', headR:'12%', bodyR:'10%', frame:'3px' },
+    };
+    return D[id]||D.shounen;
+  }
+  toneFx(d){
+    const abs='position:absolute;inset:0;pointer-events:none;';
+    let hasTone=!!d.tone, toneStyle='';
+    if(d.tone==='grid'){ hasTone=true; toneStyle=`${abs}background-image:linear-gradient(rgba(24,169,153,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(24,169,153,.16) 1px,transparent 1px);background-size:14% 20%;`; }
+    else if(d.tone){ toneStyle=`${abs}background-image:radial-gradient(${d.tone.c} ${d.tone.s}px,transparent ${(d.tone.s+0.3)}px);background-size:4.2% 6%;opacity:${d.tone.o};`; }
+    let hasFx=d.fx&&d.fx!=='none', fxStyle='';
+    if(d.fx==='speed') fxStyle=`position:absolute;left:0;top:0;bottom:0;width:55%;background:repeating-linear-gradient(118deg,rgba(32,26,23,.1) 0 2px,transparent 2px 13px);opacity:.55;pointer-events:none;`;
+    else if(d.fx==='hatch') fxStyle=`${abs}background-image:repeating-linear-gradient(45deg,rgba(20,18,15,.16) 0 1px,transparent 1px 6px),repeating-linear-gradient(-45deg,rgba(20,18,15,.1) 0 1px,transparent 1px 8px);`;
+    else if(d.fx==='sparkle') fxStyle=`${abs}background-image:radial-gradient(circle,rgba(255,255,255,.95) 0 2px,transparent 3px),radial-gradient(circle,rgba(192,107,230,.5) 0 1.5px,transparent 2.5px);background-size:26% 34%,34% 44%;background-position:14% 22%,60% 66%;`;
+    return {hasTone, toneStyle, hasFx, fxStyle};
+  }
+  // single-panel scene (used by wizard style previews)
+  sceneFor(id){
+    const d=this.styleDef(id); const tf=this.toneFx(d);
+    return {
+      bgStyle:`position:absolute;inset:0;background:${d.panel};`,
+      hasTone:tf.hasTone, toneStyle:tf.toneStyle, hasFx:tf.hasFx, fxStyle:tf.fxStyle,
+      sil1Style:`position:absolute;right:6%;bottom:-8%;width:34%;height:62%;background:${d.sil};border-radius:${d.bodyR};`,
+      sil2Style:`position:absolute;right:16%;bottom:38%;width:17%;aspect-ratio:1;background:${d.sil};border-radius:${d.headR};`,
+      sil3Style:`position:absolute;left:5%;bottom:-6%;width:22%;height:42%;background:${d.sil};opacity:.6;border-radius:${d.bodyR};`,
+      frameStyle:`position:absolute;inset:0;border:${d.frame} solid var(--line,#201A17);pointer-events:none;`,
+    };
+  }
+  // per-koma scene: varied silhouette placement so each panel feels different
+  komaScene(id, i){
+    const d=this.styleDef(id); const tf=this.toneFx(d);
+    // 4 silhouette presets cycling by koma index
+    const SIL=[
+      {b:'-12%',side:'right:8%;',w:'46%',h:'72%',hx:'right:18%;',hb:'46%',hw:'22%'},
+      {b:'-14%',side:'left:6%;', w:'44%',h:'66%',hx:'left:14%;', hb:'42%',hw:'20%'},
+      {b:'-10%',side:'right:12%;',w:'40%',h:'58%',hx:'right:20%;',hb:'40%',hw:'19%'},
+      {b:'-16%',side:'left:10%;',w:'50%',h:'70%',hx:'left:18%;', hb:'44%',hw:'23%'},
+    ][i%4];
+    const onlySpeed = d.fx==='speed' && (i%2===0); // speed lines only on some koma
+    const hasFx = d.fx==='speed' ? onlySpeed : tf.hasFx;
+    return {
+      bgStyle:`position:absolute;inset:0;background:${d.panel};`,
+      hasTone:tf.hasTone, toneStyle:tf.toneStyle, hasFx, fxStyle:tf.fxStyle,
+      silBodyStyle:`position:absolute;${SIL.side}bottom:${SIL.b};width:${SIL.w};height:${SIL.h};background:${d.sil};border-radius:${d.bodyR};`,
+      silHeadStyle:`position:absolute;${SIL.hx}bottom:${SIL.hb};width:${SIL.hw};aspect-ratio:1;background:${d.sil};border-radius:${d.headR};`,
+    };
+  }
+
+  // ---------- nav ----------
+  goTop(){ this.setState({screen:'top', styleMenuOpen:false, editingTitle:false}); }
+  startWizard(){ this.setState({screen:'wizard', wiz:{purpose:null,template:null,style:'shounen',fileName:null,fileClauses:0}, analyzing:false, analyzeDone:false, progress:0}); }
+  pickPurpose(id){ this.setState({wiz:{...this.state.wiz, purpose:id}}); }
+  pickTemplate(id){ this.setState({wiz:{...this.state.wiz, template:id}, _styleDone:false}); }
+  pickStyle(id){ this.setState({wiz:{...this.state.wiz, style:id}}); }
+  goUploadStep(){ this.setState({wiz:{...this.state.wiz, fileName:null, fileClauses:0}, _styleDone:true}); }
+  toggleStyleMenu(){ this.setState({styleMenuOpen:!this.state.styleMenuOpen}); }
+  setActiveStyle(id){ this.setState({active:{...this.state.active, style:id}, styleMenuOpen:false}); this.flash('タッチを「'+this.styleName(id)+'」に変更'); }
+  startTitleEdit(){ this.setState({editingTitle:true}); }
+  setTitle(v){ this.setState({active:{...this.state.active, title:v}}); }
+  endTitleEdit(){ this.setState({editingTitle:false}); }
+  fakeUpload(){ const n=this.state.wiz.template?this.TEMPLATES[this.state.wiz.template].clauses.length:5; this.setState({wiz:{...this.state.wiz, fileName:'当社_契約書_2026.pdf', fileClauses:n}}); }
+  skipUpload(){ this.setState({wiz:{...this.state.wiz, fileName:null}}); this.startAnalyze(true); }
+  goAnalyze(){ if(!this.state.wiz.fileName){ this.fakeUpload(); } this.startAnalyze(false); }
+  startAnalyze(skip){
+    this.setState({analyzing:true, analyzeDone:false, progress:0, analyzeMsg: skip?'雛形を準備しています…':'条文を抽出しています…'});
+    if(this._timer) clearInterval(this._timer);
+    const msgs=['条文を抽出しています…','各条文の要点を要約中…','漫画ページと対応づけています…','セリフに流しこみ中…'];
+    this._timer = setInterval(()=>{
+      const p = Math.min(100, this.state.progress + (8+Math.random()*12));
+      const mi = Math.min(msgs.length-1, Math.floor(p/26));
+      if(p>=100){ clearInterval(this._timer); this.setState({progress:100, analyzeMsg:msgs[3]}); setTimeout(()=>this.setState({analyzing:false, analyzeDone:true}), 450); }
+      else this.setState({progress:p, analyzeMsg:msgs[mi]});
+    }, 280);
+  }
+  goEdit(){
+    const tid=this.state.wiz.template||'gyomu';
+    const pages=this.buildPages(tid);
+    this.setState({screen:'edit', active:{id:null, title:this.suggestTitle(tid), template:tid, style:this.state.wiz.style||'shounen', pages}, activeId:null, pageIdx:0, selBubble:null, editingBubble:null, layoutMode:'doc'});
+  }
+  suggestTitle(tid){ return ({gyomu:'業務委託契約',nda:'秘密保持契約（NDA）',riyou:'利用規約'})[tid]+' 漫画版'; }
+  openProject(id){
+    const pj=this.state.projects.find(p=>p.id===id); if(!pj) return;
+    const clone=JSON.parse(JSON.stringify(pj.pages));
+    this.setState({screen:'edit', active:{id:pj.id, title:pj.title, template:pj.template, style:pj.style||'shounen', pages:clone}, activeId:pj.id, pageIdx:0, selBubble:null, editingBubble:null, layoutMode:'doc'});
+  }
+
+  // ---------- editor: layout / pages ----------
+  setLayout(m){ this.setState({layoutMode:m, selBubble:null, editingBubble:null}); }
+  toggleOriginal(){ this.setState({showOriginal:!this.state.showOriginal}); }
+  selectPage(i){ this.setState({pageIdx:i, selBubble:null, editingBubble:null}); }
+  movePage(i, dir){
+    const j=i+dir; const pages=this.state.active.pages.slice();
+    if(j<0||j>=pages.length) return;
+    const tmp=pages[i]; pages[i]=pages[j]; pages[j]=tmp;
+    let pi=this.state.pageIdx; if(pi===i)pi=j; else if(pi===j)pi=i;
+    this.setState({active:{...this.state.active, pages}, pageIdx:pi});
+  }
+
+  // ---------- editor: bubbles ----------
+  curPage(){ return this.state.active.pages[this.state.pageIdx]; }
+  updateBubble(pageId, bubbleId, patch){
+    const pages=this.state.active.pages.map(pg=>{
+      if(pg.id!==pageId) return pg;
+      return {...pg, bubbles:pg.bubbles.map(b=> b.id===bubbleId ? {...b, ...patch} : b)};
+    });
+    this.setState({active:{...this.state.active, pages}});
+  }
+  selectBubble(id){ this.setState({selBubble:id}); }
+  editBubble(id){ this.setState({selBubble:id, editingBubble:id}); }
+  blurBubble(){ this.setState({editingBubble:null}); }
+  setBubbleText(pageId, id, txt){ this.updateBubble(pageId, id, {text:txt, base:txt}); }
+  setSelText(txt){ const pg=this.curPage(); if(this.state.selBubble) this.setBubbleText(pg.id, this.state.selBubble, txt); }
+  setKind(k){ const pg=this.curPage(); if(this.state.selBubble) this.updateBubble(pg.id, this.state.selBubble, {kind:k}); }
+  addBubble(){
+    const pg=this.curPage();
+    const nb={id:this.uid(), text:'新しいセリフ', base:'新しいセリフ', vi:0, x:30, y:38, w:34, kind:'speech'};
+    const pages=this.state.active.pages.map(p=> p.id===pg.id ? {...p, bubbles:[...p.bubbles, nb]} : p);
+    this.setState({active:{...this.state.active, pages}, selBubble:nb.id});
+  }
+  deleteBubble(id){
+    const pg=this.curPage();
+    const pages=this.state.active.pages.map(p=> p.id===pg.id ? {...p, bubbles:p.bubbles.filter(b=>b.id!==id)} : p);
+    this.setState({active:{...this.state.active, pages}, selBubble:null, editingBubble:null});
+  }
+  regenerate(){
+    const pg=this.curPage(); const id=this.state.selBubble; if(!id) return;
+    const b=pg.bubbles.find(x=>x.id===id); if(!b) return;
+    const base=b.base||b.text;
+    const variants=[base, 'カンタンに言うと…「'+base.replace(/[。！？]+$/,'')+'」ってこと！', base.replace(/[。！？]+$/,'')+'。ここ、すごく大事！', 'ポイントは1つ。'+base.replace(/[。！？]+$/,'')+'です。'];
+    const vi=((b.vi||0)+1)%variants.length;
+    this.updateBubble(pg.id, id, {vi, text:variants[vi]});
+    this.flash('AIがセリフを言い換えました');
+  }
+
+  // ---------- drag ----------
+  setRef(pageId, el){ if(el) this._refs[pageId]=el; }
+  startMove(e, pageId, b){
+    e.preventDefault(); e.stopPropagation();
+    this.setState({selBubble:b.id, drag:{mode:'move', pageId, id:b.id, sx:e.clientX, sy:e.clientY, ox:b.x, oy:b.y}});
+  }
+  startResize(e, pageId, b){
+    e.preventDefault(); e.stopPropagation();
+    this.setState({drag:{mode:'resize', pageId, id:b.id, sx:e.clientX, ow:b.w}});
+  }
+  onMove(e){
+    const d=this.state.drag; if(!d) return;
+    const el=this._refs[d.pageId]; if(!el) return;
+    const r=el.getBoundingClientRect();
+    if(d.mode==='move'){
+      const dx=(e.clientX-d.sx)/r.width*100, dy=(e.clientY-d.sy)/r.height*100;
+      const x=Math.max(0, Math.min(92, d.ox+dx)), y=Math.max(0, Math.min(90, d.oy+dy));
+      this.updateBubble(d.pageId, d.id, {x, y});
+    } else {
+      const dw=(e.clientX-d.sx)/r.width*100;
+      const w=Math.max(14, Math.min(70, d.ow+dw));
+      this.updateBubble(d.pageId, d.id, {w});
+    }
+  }
+  endDrag(){ if(this.state.drag) this.setState({drag:null}); }
+
+  // ---------- save ----------
+  saveProject(){
+    const a=this.state.active; if(!a) return;
+    let projects, activeId;
+    if(a.id){
+      projects=this.state.projects.map(p=> p.id===a.id ? {...p, title:a.title, template:a.template, style:a.style||'shounen', pages:JSON.parse(JSON.stringify(a.pages)), updated:'たった今', status:'done'} : p);
+      activeId=a.id;
+    } else {
+      const np={id:'pj'+(++this._idc), title:a.title, template:a.template, style:a.style||'shounen', pages:JSON.parse(JSON.stringify(a.pages)), updated:'たった今', status:'done'};
+      projects=[np, ...this.state.projects]; activeId=np.id;
+    }
+    this.setState({projects, activeId, active:{...a, id:activeId}, screen:'save'});
+  }
+  backToEdit(){ this.setState({screen:'edit'}); }
+  flash(msg){ this.setState({toast:msg}); if(this._t2)clearTimeout(this._t2); this._t2=setTimeout(()=>this.setState({toast:null}),1800); }
+
+  // ---------- clause text editing ----------
+  editClause(pageId){ this.setState({editingClauseId:pageId}); }
+  blurClause(){ this.setState({editingClauseId:null}); }
+  updateClauseText(pageId, text){
+    const pages=this.state.active.pages.map(p=>p.id===pageId?{...p,clauseText:text}:p);
+    this.setState({active:{...this.state.active, pages}});
+  }
+  // ---------- settings panel ----------
+  openSettingStep(step){ this.setState({settingStep:step}); }
+  closeSettingStep(){ this.setState({settingStep:null}); }
+  changeTemplate(id){
+    if(!this.state.active) return;
+    const pages=this.buildPages(id);
+    this.setState({active:{...this.state.active, template:id, pages}, settingStep:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null});
+    this.flash('雛形を「'+this.TEMPLATES[id].name+'」に変更しました');
+  }
+  changePurpose(id){
+    this.setState({wiz:{...this.state.wiz, purpose:id}, settingStep:null});
+    this.flash('目的を変更しました');
+  }
+
+  syncBubblesFromClause(){
+    const pg=this.curPage(); if(!pg) return;
+    const text=pg.clauseText;
+    const sents=(text.match(/[^。！？]+[。！？]?/g)||[text]).filter(s=>s.trim().length>3);
+    const get=i=>{const idx=Math.min(i,sents.length-1);return(sents[idx]||'').trim().replace(/^\d+\.\s*/,'');};
+    const newBubbles=pg.bubbles.map((b,i)=>{
+      const base=get(i); let t;
+      if(b.kind==='narration'||i===0) t=base;
+      else if(i===1) t=base.replace(/[。！？]$/,'')+'！';
+      else if(i===2) t='つまり、'+base.replace(/[。！？]$/,'')+'…';
+      else t='ポイントは、'+base.replace(/[。！？]$/,'')+'。';
+      return {...b, text:t, base:t, vi:0};
+    });
+    const pages=this.state.active.pages.map(p=>p.id===pg.id?{...p,bubbles:newBubbles}:p);
+    this.setState({active:{...this.state.active,pages}});
+    this.flash('条文テキストから吹き出しを更新しました ✓');
+  }
+
+  componentDidMount(){
+    this._mv=(e)=>this.onMove(e); this._up=()=>this.endDrag();
+    window.addEventListener('mousemove', this._mv); window.addEventListener('mouseup', this._up);
+  }
+  componentWillUnmount(){
+    window.removeEventListener('mousemove', this._mv); window.removeEventListener('mouseup', this._up);
+    if(this._timer)clearInterval(this._timer); if(this._t2)clearTimeout(this._t2);
+  }
+
+  // ---------- styles ----------
+  bubbleStyle(b, sel){
+    const t=this.theme(); const narr=b.kind==='narration', shout=b.kind==='shout';
+    return {position:'absolute', left:b.x+'%', top:b.y+'%', width:b.w+'%', minWidth:'90px',
+      background: narr?'#FFFDF6':'var(--bubble,#fff)', border:'3px solid var(--line,#201A17)',
+      borderRadius: narr?'4px':(shout?'40% 60% 55% 45%/55% 45% 60% 40%':'22px'),
+      padding:'10px 13px', boxShadow:'3px 3px 0 rgba(32,26,23,.18)', cursor:'move',
+      zIndex: sel?20:5, outline: sel?'2px dashed var(--accent,#FF6B35)':'none', outlineOffset:'3px',
+      fontFamily: narr?"'Zen Maru Gothic'":"'Yomogi', cursive", userSelect:'none'};
+  }
+
+  renderVals(){
+    const st=this.state, t=this.theme();
+    const rootStyle={'--paper':t.paper,'--ink':t.ink,'--accent':t.accent,'--accent2':t.accent2,'--panel':t.panel,'--tone':t.tone,'--line':t.line,'--bubble':t.bubble, minHeight:'100vh', fontFamily:"'Zen Maru Gothic', sans-serif", color:t.ink, background:t.paper};
+
+    const v={ rootStyle,
+      showTop:st.screen==='top', showWizard:st.screen==='wizard', showEdit:st.screen==='edit', showSave:st.screen==='save',
+      startWizard:()=>this.startWizard(), goTop:()=>this.goTop(), toast:st.toast,
+    };
+
+    // ----- TOP -----
+    if(st.screen==='top'){
+      const tabs=[['all','すべて'],['draft','進行中'],['done','完成']];
+      v.topTabs=tabs.map(([id,label])=>({label, onClick:()=>this.setState({topTab:id}),
+        style:`font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;padding:6px 14px;border-radius:20px;cursor:pointer;border:2.5px solid var(--line,#201A17);${st.topTab===id?'background:var(--ink,#201A17);color:#fff;':'background:#fff;color:var(--ink,#201A17);'}`}));
+      const filtered=st.projects.filter(p=> st.topTab==='all'?true:p.status===st.topTab);
+      v.projectCards=filtered.map(p=>{
+        const tpl=this.TEMPLATES[p.template];
+        return { title:p.title, templateName:tpl.name, pageCount:p.pages.length, updated:p.updated,
+          coverLine:p.pages[0].bubbles[0].text, onOpen:()=>this.openProject(p.id),
+          coverStyle:`position:relative;height:158px;background:${tpl.cover};overflow:hidden;`,
+          badgeStyle:`position:absolute;left:14px;bottom:12px;background:var(--accent,#FF6B35);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:14px;padding:3px 10px;font-family:'Zen Maru Gothic';font-weight:900;font-size:10.5px;`,
+          statusLabel:p.status==='done'?'完成':'下書き',
+          statusStyle:`flex:none;font-family:'Zen Maru Gothic';font-weight:900;font-size:11px;padding:3px 10px;border-radius:14px;border:2px solid var(--line,#201A17);${p.status==='done'?'background:var(--accent2,#18A999);color:#fff;':'background:#fff;color:#9a8f82;'}`,
+        };
+      });
+    }
+
+    // ----- WIZARD -----
+    if(st.screen==='wizard'){
+      let step=0;
+      if(st.wiz.purpose) step=1;
+      if(st.wiz.template) step=2;
+      if(st.wiz.template && st._styleDone) step=3;
+      if(st.analyzing||st.analyzeDone) step=4;
+      v.wizStep0=step===0; v.wizStep1=step===1; v.wizStepStyle=step===2; v.wizStep2=step===3; v.wizStep3=step===4;
+      const labels=['目的','雛形','タッチ','アップロード','AI解析'];
+      v.wizSteps=labels.map((label,i)=>{
+        const active=i<=step, cur=i===step;
+        return { num:i+1, label, showBar:i<4,
+          dotStyle:`width:30px;height:30px;border-radius:50%;border:3px solid var(--line,#201A17);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;${active?'background:var(--accent,#FF6B35);color:#fff;':'background:#fff;color:#bcae9c;'}`,
+          labelStyle:`font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;margin:0 8px;${cur?'color:var(--ink,#201A17);':'color:#9a8f82;'}`,
+          barStyle:`width:28px;height:3px;border-radius:2px;margin-right:8px;${i<step?'background:var(--accent,#FF6B35);':'background:rgba(32,26,23,.18);'}`};
+      });
+      // purpose cards
+      v.purposeCards=this.PURPOSES.map(p=>{
+        const seld=st.wiz.purpose===p.id;
+        return {icon:p.icon, title:p.title, desc:p.desc, examples:p.examples, onSelect:()=>this.pickPurpose(p.id),
+          cardStyle:`background:#fff;border:3px solid var(--line,#201A17);border-radius:18px;padding:24px 20px;cursor:pointer;text-align:center;box-shadow:${seld?'6px 6px 0 var(--accent,#FF6B35)':'5px 5px 0 var(--line,#201A17)'};transform:${seld?'translate(-1px,-1px)':'none'};`,
+          iconStyle:`width:64px;height:64px;margin:0 auto;border-radius:18px;border:3px solid var(--line,#201A17);background:${p.color};display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:3px 3px 0 var(--line,#201A17);`};
+      });
+      // template cards
+      const recs=(this.PURPOSES.find(x=>x.id===st.wiz.purpose)||{}).recs||[];
+      v.templateCards=Object.values(this.TEMPLATES).map(tpl=>{
+        const seld=st.wiz.template===tpl.id;
+        return {name:tpl.name, sub:tpl.sub, cover:tpl.cover, pageCount:tpl.clauses.length, previewLine:tpl.clauses[0].t[1], recommended:recs.indexOf(tpl.id)===0, onSelect:()=>this.pickTemplate(tpl.id),
+          cardStyle:`background:#fff;border:3px solid var(--line,#201A17);border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:${seld?'6px 6px 0 var(--accent,#FF6B35)':'5px 5px 0 var(--line,#201A17)'};transform:${seld?'translate(-1px,-1px)':'none'};`};
+      });
+      // style cards
+      v.goUploadStep=()=>this.goUploadStep();
+      v.styleCards=this.mangaStyles().map(s=>{
+        const seld=st.wiz.style===s.id; const sc=this.sceneFor(s.id);
+        return {emoji:s.emoji, name:s.name, desc:s.desc, onSelect:()=>this.pickStyle(s.id),
+          bgStyle:sc.bgStyle, hasTone:sc.hasTone, toneStyle:sc.toneStyle, hasFx:sc.hasFx, fxStyle:sc.fxStyle,
+          silStyle:sc.sil1Style,
+          cardStyle:`background:#fff;border:3px solid var(--line,#201A17);border-radius:16px;overflow:hidden;cursor:pointer;box-shadow:${seld?'6px 6px 0 var(--accent,#FF6B35)':'4px 4px 0 var(--line,#201A17)'};transform:${seld?'translate(-1px,-1px)':'none'};`};
+      });
+      // upload
+      v.noFile=!st.wiz.fileName; v.hasFile=!!st.wiz.fileName; v.fileName=st.wiz.fileName; v.fileClauses=st.wiz.fileClauses;
+      v.fakeUpload=()=>this.fakeUpload(); v.skipUpload=()=>this.skipUpload(); v.goAnalyze=()=>this.goAnalyze();
+      v.dropStyle=`border:3px dashed var(--accent,#FF6B35);border-radius:20px;padding:46px 30px;text-align:center;cursor:pointer;background:${st.wiz.fileName?'rgba(24,169,153,.07)':'rgba(255,107,53,.05)'};`;
+      v.analyzeBtnStyle=`font-family:'Zen Maru Gothic';font-weight:900;color:#fff;background:var(--accent,#FF6B35);border:3px solid var(--line,#201A17);border-radius:30px;padding:12px 26px;cursor:pointer;box-shadow:3px 3px 0 var(--line,#201A17);`;
+      // analyze
+      v.analyzing=st.analyzing; v.analyzeDone=st.analyzeDone; v.analyzeMsg=st.analyzeMsg;
+      v.progressStyle=`height:100%;width:${st.progress}%;background:var(--accent,#FF6B35);transition:width .25s ease;`;
+      v.goEdit=()=>this.goEdit();
+      const tpl=this.TEMPLATES[st.wiz.template||'gyomu'];
+      v.mapRows=tpl.clauses.map((c,i)=>{ const conf=78+((i*7)%20);
+        return {no:c.no, title:c.title, text:c.text, conf,
+          confStyle:`font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;padding:3px 9px;border-radius:12px;border:2px solid var(--line,#201A17);${conf>=88?'background:var(--accent2,#18A999);color:#fff;':'background:#FFE7A3;color:var(--ink,#201A17);'}`};
+      });
+    }
+
+    // ----- EDIT -----
+    if(st.screen==='edit' && st.active){
+      const a=st.active, isStory=st.layoutMode==='story';
+      v.activeTitle=a.title; v.activeTemplateName=this.TEMPLATES[a.template].name;
+      v.titleEditing=!!st.editingTitle; v.titleNotEditing=!st.editingTitle;
+      v.startTitleEdit=()=>this.startTitleEdit(); v.onTitleChange=(e)=>this.setTitle(e.target.value); v.onTitleBlur=()=>this.endTitleEdit();
+      v.pageTotal=a.pages.length; v.showOriginal=st.showOriginal;
+      const isDoc=st.layoutMode!=='perClause'; const isPerClause=!isDoc;
+      v.isDoc=isDoc; v.isPerClause=isPerClause;
+      v.setDoc=()=>this.setLayout('doc'); v.setPerClause=()=>this.setLayout('perClause');
+      v.toggleOriginal=()=>this.toggleOriginal(); v.saveProject=()=>this.saveProject(); v.goTop=()=>this.goTop();
+      v.docTabStyle=`padding:8px 15px;cursor:pointer;${isDoc?'background:var(--ink,#201A17);color:#fff;':'background:#fff;color:var(--ink,#201A17);'}`;
+      v.perClauseTabStyle=`padding:8px 15px;cursor:pointer;border-left:2.5px solid var(--line,#201A17);${isPerClause?'background:var(--ink,#201A17);color:#fff;':'background:#fff;color:var(--ink,#201A17);'}`;
+      v.origToggleStyle=`font-family:'Zen Maru Gothic';font-weight:900;font-size:12.5px;padding:9px 14px;border-radius:24px;border:2.5px solid var(--line,#201A17);cursor:pointer;${st.showOriginal?'background:var(--ink,#201A17);color:#fff;':'background:#fff;color:var(--ink,#201A17);'}`;
+      // style switcher
+      const curStyle=a.style||'shounen';
+      v.activeStyleName=this.styleName(curStyle); v.styleMenuOpen=st.styleMenuOpen; v.toggleStyleMenu=()=>this.toggleStyleMenu();
+      v.styleMenu=this.mangaStyles().map(s=>({emoji:s.emoji, name:s.name, active:s.id===curStyle, onPick:()=>this.setActiveStyle(s.id),
+        rowStyle:`display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);${s.id===curStyle?'background:rgba(255,107,53,.12);':''}`}));
+      const scene=this.sceneFor(curStyle);
+      // page rail
+      v.pageThumbs=a.pages.map((pg,i)=>({ no:pg.no, title:pg.title, onSelect:()=>this.selectPage(i),
+        onUp:(e)=>{e.stopPropagation();this.movePage(i,-1);}, onDown:(e)=>{e.stopPropagation();this.movePage(i,1);},
+        wrapStyle:'display:flex;align-items:stretch;gap:6px;',
+        thumbStyle:`position:relative;flex:1;height:74px;border-radius:9px;overflow:hidden;cursor:pointer;background:var(--panel,#ECE4D6);border:3px solid ${(isPerClause&&i===st.pageIdx)?'var(--accent,#FF6B35)':'var(--line,#201A17)'};`,
+        upStyle:`width:22px;flex:1;display:flex;align-items:center;justify-content:center;border:2px solid var(--line,#201A17);border-radius:6px;cursor:pointer;font-size:9px;background:#fff;color:var(--ink,#201A17);`,
+        downStyle:`width:22px;flex:1;display:flex;align-items:center;justify-content:center;border:2px solid var(--line,#201A17);border-radius:6px;cursor:pointer;font-size:9px;background:#fff;color:var(--ink,#201A17);`}));
+      // canvas pages — each page is a 2x2 koma grid (4 panels) with drop-in images
+      const frameStyle=`position:absolute;inset:0;border:${this.styleDef(curStyle).frame} solid var(--line,#201A17);pointer-events:none;`;
+      const renderPage=(pg)=>{ const idx=a.pages.indexOf(pg); return { no:pg.no, title:pg.title, clauseText:pg.clauseText, showDocText:true,
+        editingClause:st.editingClauseId===pg.id, notEditingClause:st.editingClauseId!==pg.id,
+        onClauseEdit:()=>this.editClause(pg.id),
+        onClauseChange:(e)=>this.updateClauseText(pg.id, e.target.value),
+        onClauseBlur:()=>this.blurClause(),
+        mangaLabel:isDoc?'▼ この条文をまんがで解説（クリックで編集）':'▼ この条文のまんが解説',
+        mangaLabelStyle:`font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;color:#fff;background:var(--accent,#FF6B35);border:2.5px solid var(--line,#201A17);border-top:none;padding:7px 14px;text-align:center;${isDoc?'cursor:pointer;':''}`,
+        onJump:()=>this.setState({layoutMode:'perClause', pageIdx:idx, selBubble:null, editingBubble:null}),
+        canvasRef:(el)=>this.setRef(pg.id, el),
+        canvasStyle:'position:relative;width:min(100%,560px);aspect-ratio:560/392;border-radius:6px;overflow:hidden;background:var(--line,#201A17);box-shadow:6px 6px 0 var(--line,#201A17);',
+        komaGridStyle:`position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;background:var(--line,#201A17);`,
+        frameStyle,
+        komas:[0,1,2,3].map(i=>{
+          const ks=this.komaScene(curStyle, i);
+          return { num:i+1, slotId:'slot-'+(pg.id)+'-'+i,
+            cellStyle:'position:relative;overflow:hidden;background:var(--panel,#ECE4D6);',
+            bgStyle:ks.bgStyle, hasTone:ks.hasTone, toneStyle:ks.toneStyle, hasFx:ks.hasFx, fxStyle:ks.fxStyle,
+            silBodyStyle:ks.silBodyStyle, silHeadStyle:ks.silHeadStyle,
+            numStyle:'position:absolute;left:5px;top:4px;font-family:\'Zen Maru Gothic\';font-weight:900;font-size:10px;color:var(--ink,#201A17);background:rgba(255,255,255,.7);border-radius:5px;padding:0 5px;z-index:2;pointer-events:none;' };
+        }),
+        bubbles: pg.bubbles.map(b=>{
+          const sel=st.selBubble===b.id, editing=st.editingBubble===b.id, narr=b.kind==='narration';
+          return { text:b.text, selected:sel, editing, notEditing:!editing, hasTail:!narr,
+            boxStyle:this.bubbleStyle(b, sel),
+            textStyle:`font-size:${narr?'12.5px':'14px'};font-weight:${narr?'700':'400'};line-height:1.55;color:var(--ink,#201A17);${narr?"":"text-align:center;"}`,
+            taStyle:'width:100%;min-height:54px;border:none;outline:none;background:transparent;font-family:inherit;font-size:14px;line-height:1.55;color:var(--ink,#201A17);resize:none;text-align:center;',
+            tailStyle:'position:absolute;width:18px;height:18px;background:var(--bubble,#fff);border-right:3px solid var(--line,#201A17);border-bottom:3px solid var(--line,#201A17);bottom:-10px;left:26px;transform:rotate(45deg);',
+            onDown:(e)=>this.startMove(e, pg.id, b),
+            onResize:(e)=>this.startResize(e, pg.id, b),
+            onEdit:(e)=>{e.stopPropagation();this.editBubble(b.id);},
+            onDelete:(e)=>{e.stopPropagation();this.deleteBubble(b.id);},
+            onText:(e)=>this.setBubbleText(pg.id, b.id, e.target.value),
+            onBlur:()=>this.blurBubble(), stop:(e)=>e.stopPropagation(),
+          };
+        }),
+      }; };
+      if(isDoc){ v.canvasPages=a.pages.map(renderPage); }
+      else { v.canvasPages=[renderPage(a.pages[st.pageIdx])]; }
+      // inspector
+      const cp=a.pages[st.pageIdx];
+      v.curNo=cp.no; v.curTitle=cp.title; v.curClauseText=cp.clauseText;
+      v.onClauseTextChange=(e)=>this.updateClauseText(cp.id, e.target.value);
+      v.syncBubblesFromClause=()=>this.syncBubblesFromClause();
+      // ----- settings progress chart -----
+      const purposeMap={trouble:{label:'トラブル削減',emoji:'🛡️'},conversion:{label:'成約率向上',emoji:'📈'},internal:{label:'社内リスクヘッジ',emoji:'🔐'}};
+      const pm=purposeMap[st.wiz.purpose]||{label:'未設定',emoji:'📋'};
+      const dotS='width:20px;height:20px;border-radius:50%;background:var(--accent2,#18A999);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex:none;font-family:\'Zen Maru Gothic\';';
+      const rowS='display:flex;align-items:center;gap:8px;padding:7px 10px;border:2px solid var(--line,#201A17);border-radius:10px;cursor:pointer;background:#fff;transition:box-shadow .15s;';
+      v.settingsSteps=[
+        {num:'1',label:'目的',emoji:pm.emoji,value:pm.label,dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('purpose')},
+        {num:'2',label:'雛形',emoji:'📄',value:this.TEMPLATES[a.template].name,dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('template')},
+        {num:'3',label:'タッチ',emoji:this.mangaStyles().find(s=>s.id===curStyle).emoji,value:this.styleName(curStyle),dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('style')},
+      ];
+      // ----- settings modal -----
+      v.showSettingModal=!!st.settingStep;
+      v.closeSettingStep=()=>this.closeSettingStep();
+      v.stopSettingProp=(e)=>e.stopPropagation();
+      const cardBase='background:#fff;border:3px solid var(--line,#201A17);border-radius:16px;overflow:hidden;cursor:pointer;';
+      if(st.settingStep==='template'){
+        v.settingModalTitle='雛形を変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=Object.values(this.TEMPLATES).map(tpl=>({
+          name:tpl.name, sub:tpl.sub+' · 全'+tpl.clauses.length+'条', preview:tpl.clauses[0].t[1], active:a.template===tpl.id,
+          onPick:()=>this.changeTemplate(tpl.id),
+          coverStyle:`position:relative;height:120px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${tpl.cover};`,
+          cardStyle:cardBase+'box-shadow:'+(a.template===tpl.id?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+        }));
+      } else if(st.settingStep==='style'){
+        v.settingModalTitle='タッチを変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=this.mangaStyles().map(s=>{
+          const d=this.styleDef(s.id); const panel=typeof d.panel==='string'?d.panel:'#F3ECDD';
+          return {name:s.name, sub:s.desc, preview:s.emoji+' '+s.name, active:curStyle===s.id,
+            onPick:()=>{this.setActiveStyle(s.id);this.closeSettingStep();},
+            coverStyle:`position:relative;height:100px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${panel};`,
+            cardStyle:cardBase+'box-shadow:'+(curStyle===s.id?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+          };
+        });
+      } else if(st.settingStep==='purpose'){
+        v.settingModalTitle='目的を変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=this.PURPOSES.map(p=>{
+          const sel=st.wiz.purpose===p.id;
+          return {name:p.title, sub:p.desc, preview:p.icon+' '+p.examples, active:sel,
+            onPick:()=>this.changePurpose(p.id),
+            coverStyle:`position:relative;height:100px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${p.color}22;display:flex;align-items:center;justify-content:center;font-size:44px;`,
+            cardStyle:cardBase+'box-shadow:'+(sel?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+          };
+        });
+      } else {
+        v.settingModalTitle=''; v.settingModalGrid=''; v.settingModalCards=[];
+      }
+      const selB = cp.bubbles.find(b=>b.id===st.selBubble);
+      v.hasSelection=!!selB; v.noSelection=!selB; v.selText=selB?selB.text:'';
+      v.onSelTextChange=(e)=>this.setSelText(e.target.value);
+      v.regenerate=()=>this.regenerate(); v.addBubble=()=>this.addBubble();
+      v.regenToneLabel=['そのまま','カジュアル','強調','要点'][selB?(selB.vi||0):0];
+      const kinds=[['speech','セリフ'],['narration','ナレーション'],['shout','叫び']];
+      v.kindOptions=kinds.map(([k,label])=>({label, onClick:()=>this.setKind(k),
+        style:`flex:1;text-align:center;font-family:'Zen Maru Gothic';font-weight:900;font-size:11.5px;padding:8px 4px;border-radius:10px;cursor:pointer;border:2.5px solid var(--line,#201A17);${selB&&selB.kind===k?'background:var(--ink,#201A17);color:#fff;':'background:#fff;color:var(--ink,#201A17);'}`}));
+    }
+
+    // ----- SAVE -----
+    if(st.screen==='save' && st.active){ v.activeTitle=st.active.title; v.pageTotal=st.active.pages.length; v.backToEdit=()=>this.backToEdit(); }
+
+    return v;
+  }
+}
+</script>
+</body>
+</html>

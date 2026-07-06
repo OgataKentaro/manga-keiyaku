@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, 'design')));
 
 // Serve the editable dc.html as root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'design', 'マンガ契約.dc.html'));
+  res.sendFile(path.join(__dirname, 'design', 'app.html'));
 });
 
 app.listen(PORT, () => {
