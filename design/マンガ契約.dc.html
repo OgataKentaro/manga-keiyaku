@@ -359,7 +359,28 @@
       </div>
 
       <!-- inspector -->
-      <div style="width:312px;flex:none;border-left:3px solid var(--line,#201A17);background:#fff;overflow-y:auto;padding:18px 18px 40px;">
+      <div style="width:312px;flex:none;border-left:3px solid var(--line,#201A17);background:#fff;display:flex;flex-direction:column;overflow:hidden;">
+        <!-- ===== Progress chart (non-scrolling top) ===== -->
+        <div style="flex:none;background:var(--paper,#FFF6EA);border-bottom:2.5px solid var(--line,#201A17);padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+            <span style="font-size:13px;">⚙️</span>
+            <span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:11px;letter-spacing:.5px;color:var(--ink,#201A17);">プロジェクト設定</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <sc-for list="{{ settingsSteps }}" as="ss" hint-placeholder-count="3">
+              <div onClick="{{ ss.onClick }}" style="{{ ss.rowStyle }}">
+                <div style="{{ ss.dotStyle }}">{{ ss.num }}</div>
+                <div style="flex:1;min-width:0;line-height:1.25;">
+                  <div style="font-family:'Zen Maru Gothic';font-size:9.5px;font-weight:700;color:#9a8f82;">{{ ss.label }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-size:12px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink,#201A17);">{{ ss.emoji }} {{ ss.value }}</div>
+                </div>
+                <div style="font-family:'Zen Maru Gothic';font-size:10.5px;font-weight:900;color:var(--accent,#FF6B35);flex:none;">変更→</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <!-- ===== Scrollable inspector content ===== -->
+        <div style="flex:1;overflow-y:auto;padding:18px 18px 40px;">
         <sc-if value="{{ showOriginal }}" hint-placeholder-val="{{ true }}">
           <div style="margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="font-size:15px;">📜</span><span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);">元の条文</span></div>
@@ -391,9 +412,36 @@
             </sc-for>
           </div>
         </div>
+        </div><!-- end scrollable inspector content -->
+      </div><!-- end inspector -->
+    </div><!-- end 3-col layout -->
+    <!-- ===== Settings change modal ===== -->
+    <sc-if value="{{ showSettingModal }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSettingStep }}" style="position:fixed;inset:0;z-index:100;background:rgba(32,26,23,.6);display:flex;align-items:center;justify-content:center;padding:30px;">
+        <div onClick="{{ stopSettingProp }}" style="background:var(--paper,#FFF6EA);border:3px solid var(--line,#201A17);border-radius:20px;padding:28px;max-width:720px;width:100%;box-shadow:8px 8px 0 var(--line,#201A17);max-height:85vh;overflow-y:auto;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+            <h2 style="font-family:'Reggae One',cursive;font-size:24px;color:var(--ink,#201A17);margin:0;">{{ settingModalTitle }}</h2>
+            <div onClick="{{ closeSettingStep }}" style="width:36px;height:36px;border:2.5px solid var(--line,#201A17);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;background:#fff;">×</div>
+          </div>
+          <div style="{{ settingModalGrid }}">
+            <sc-for list="{{ settingModalCards }}" as="mc" hint-placeholder-count="3">
+              <div onClick="{{ mc.onPick }}" style="{{ mc.cardStyle }}">
+                <div style="{{ mc.coverStyle }}">
+                  <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(32,26,23,.22) 1.2px,transparent 1.4px);background-size:8px 8px;opacity:.5;pointer-events:none;"></div>
+                  <div style="position:absolute;left:10px;top:10px;background:#fff;border:2.5px solid var(--line,#201A17);border-radius:12px;padding:5px 10px;font-family:'Yomogi',cursive;font-size:11px;color:var(--ink,#201A17);box-shadow:2px 2px 0 var(--line,#201A17);max-width:75%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ mc.preview }}</div>
+                  <sc-if value="{{ mc.active }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:8px;top:8px;background:var(--accent2,#18A999);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:16px;padding:3px 8px;font-family:'Zen Maru Gothic';font-weight:900;font-size:10px;">現在</div></sc-if>
+                </div>
+                <div style="padding:10px 12px 12px;">
+                  <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:14px;color:var(--ink,#201A17);">{{ mc.name }}</div>
+                  <div style="font-family:'Zen Maru Gothic';font-weight:700;font-size:11px;color:#9a8f82;margin-top:2px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ mc.sub }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </sc-if>
+  </div><!-- end main editor div -->
   </sc-if>
 
   <!-- ===== SAVE ===== -->
@@ -472,7 +520,7 @@ class Component extends DCLogic {
       ],
       wiz:{ purpose:null, template:null, style:'shounen', fileName:null, fileClauses:0 },
       analyzing:false, analyzeDone:false, progress:0, analyzeMsg:'条文を抽出しています…',
-      active:null, activeId:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null,
+      active:null, activeId:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null, settingStep:null,
       showOriginal:true, layoutMode:'doc', drag:null, toast:null, styleMenuOpen:false,
     };
     this._refs = {};
@@ -699,6 +747,20 @@ class Component extends DCLogic {
     const pages=this.state.active.pages.map(p=>p.id===pageId?{...p,clauseText:text}:p);
     this.setState({active:{...this.state.active, pages}});
   }
+  // ---------- settings panel ----------
+  openSettingStep(step){ this.setState({settingStep:step}); }
+  closeSettingStep(){ this.setState({settingStep:null}); }
+  changeTemplate(id){
+    if(!this.state.active) return;
+    const pages=this.buildPages(id);
+    this.setState({active:{...this.state.active, template:id, pages}, settingStep:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null});
+    this.flash('雛形を「'+this.TEMPLATES[id].name+'」に変更しました');
+  }
+  changePurpose(id){
+    this.setState({wiz:{...this.state.wiz, purpose:id}, settingStep:null});
+    this.flash('目的を変更しました');
+  }
+
   syncBubblesFromClause(){
     const pg=this.curPage(); if(!pg) return;
     const text=pg.clauseText;
@@ -891,6 +953,52 @@ class Component extends DCLogic {
       v.curNo=cp.no; v.curTitle=cp.title; v.curClauseText=cp.clauseText;
       v.onClauseTextChange=(e)=>this.updateClauseText(cp.id, e.target.value);
       v.syncBubblesFromClause=()=>this.syncBubblesFromClause();
+      // ----- settings progress chart -----
+      const purposeMap={trouble:{label:'トラブル削減',emoji:'🛡️'},conversion:{label:'成約率向上',emoji:'📈'},internal:{label:'社内リスクヘッジ',emoji:'🔐'}};
+      const pm=purposeMap[st.wiz.purpose]||{label:'未設定',emoji:'📋'};
+      const dotS='width:20px;height:20px;border-radius:50%;background:var(--accent2,#18A999);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex:none;font-family:\'Zen Maru Gothic\';';
+      const rowS='display:flex;align-items:center;gap:8px;padding:7px 10px;border:2px solid var(--line,#201A17);border-radius:10px;cursor:pointer;background:#fff;transition:box-shadow .15s;';
+      v.settingsSteps=[
+        {num:'1',label:'目的',emoji:pm.emoji,value:pm.label,dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('purpose')},
+        {num:'2',label:'雛形',emoji:'📄',value:this.TEMPLATES[a.template].name,dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('template')},
+        {num:'3',label:'タッチ',emoji:this.mangaStyles().find(s=>s.id===curStyle).emoji,value:this.styleName(curStyle),dotStyle:dotS,rowStyle:rowS,onClick:()=>this.openSettingStep('style')},
+      ];
+      // ----- settings modal -----
+      v.showSettingModal=!!st.settingStep;
+      v.closeSettingStep=()=>this.closeSettingStep();
+      v.stopSettingProp=(e)=>e.stopPropagation();
+      const cardBase='background:#fff;border:3px solid var(--line,#201A17);border-radius:16px;overflow:hidden;cursor:pointer;';
+      if(st.settingStep==='template'){
+        v.settingModalTitle='雛形を変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=Object.values(this.TEMPLATES).map(tpl=>({
+          name:tpl.name, sub:tpl.sub+' · 全'+tpl.clauses.length+'条', preview:tpl.clauses[0].t[1], active:a.template===tpl.id,
+          onPick:()=>this.changeTemplate(tpl.id),
+          coverStyle:`position:relative;height:120px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${tpl.cover};`,
+          cardStyle:cardBase+'box-shadow:'+(a.template===tpl.id?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+        }));
+      } else if(st.settingStep==='style'){
+        v.settingModalTitle='タッチを変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=this.mangaStyles().map(s=>{
+          const d=this.styleDef(s.id); const panel=typeof d.panel==='string'?d.panel:'#F3ECDD';
+          return {name:s.name, sub:s.desc, preview:s.emoji+' '+s.name, active:curStyle===s.id,
+            onPick:()=>{this.setActiveStyle(s.id);this.closeSettingStep();},
+            coverStyle:`position:relative;height:100px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${panel};`,
+            cardStyle:cardBase+'box-shadow:'+(curStyle===s.id?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+          };
+        });
+      } else if(st.settingStep==='purpose'){
+        v.settingModalTitle='目的を変更する'; v.settingModalGrid='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;';
+        v.settingModalCards=this.PURPOSES.map(p=>{
+          const sel=st.wiz.purpose===p.id;
+          return {name:p.title, sub:p.desc, preview:p.icon+' '+p.examples, active:sel,
+            onPick:()=>this.changePurpose(p.id),
+            coverStyle:`position:relative;height:100px;border-bottom:3px solid var(--line,#201A17);overflow:hidden;background:${p.color}22;display:flex;align-items:center;justify-content:center;font-size:44px;`,
+            cardStyle:cardBase+'box-shadow:'+(sel?'6px 6px 0 var(--accent2,#18A999)':'4px 4px 0 var(--line,#201A17)')+';',
+          };
+        });
+      } else {
+        v.settingModalTitle=''; v.settingModalGrid=''; v.settingModalCards=[];
+      }
       const selB = cp.bubbles.find(b=>b.id===st.selBubble);
       v.hasSelection=!!selB; v.noSelection=!selB; v.selText=selB?selB.text:'';
       v.onSelTextChange=(e)=>this.setSelText(e.target.value);
