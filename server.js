@@ -5,12 +5,12 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files from the design directory
-app.use('/design', express.static(path.join(__dirname, 'design')));
+// Serve design folder at root so relative paths (./support.js etc.) work
+app.use(express.static(path.join(__dirname, 'design')));
 
-// Serve standalone-preview.html as the root
+// Serve the editable dc.html as root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'design', 'standalone-preview.html'));
+  res.sendFile(path.join(__dirname, 'design', 'マンガ契約.dc.html'));
 });
 
 app.listen(PORT, () => {

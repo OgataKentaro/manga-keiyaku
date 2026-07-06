@@ -311,7 +311,12 @@
             <sc-if value="{{ pg.showDocText }}" hint-placeholder-val="{{ true }}">
               <div style="background:#fff;border:2.5px solid var(--line,#201A17);border-radius:12px 12px 0 0;border-bottom:none;padding:16px 22px 14px;">
                 <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:15px;color:var(--ink,#201A17);">{{ pg.no }}　{{ pg.title }}</div>
-                <div style="font-family:'Zen Maru Gothic';font-weight:500;font-size:13px;color:#3f372e;line-height:1.95;margin-top:8px;text-align:justify;">{{ pg.clauseText }}</div>
+                <sc-if value="{{ pg.editingClause }}" hint-placeholder-val="{{ false }}">
+                  <textarea value="{{ pg.clauseText }}" onChange="{{ pg.onClauseChange }}" onBlur="{{ pg.onClauseBlur }}" style="width:100%;min-height:80px;border:none;border-top:2px solid var(--accent,#FF6B35);padding:8px 0 4px;font-family:'Zen Maru Gothic';font-weight:500;font-size:13px;color:#3f372e;line-height:1.95;resize:vertical;outline:none;background:transparent;margin-top:8px;"></textarea>
+                </sc-if>
+                <sc-if value="{{ pg.notEditingClause }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ pg.onClauseEdit }}" title="クリックして条文を編集" style="font-family:'Zen Maru Gothic';font-weight:500;font-size:13px;color:#3f372e;line-height:1.95;margin-top:8px;text-align:justify;cursor:text;">{{ pg.clauseText }}<span style="margin-left:4px;font-size:10px;color:#bcb0a5;">✎</span></div>
+                </sc-if>
               </div>
               <div onClick="{{ pg.onJump }}" style="{{ pg.mangaLabelStyle }}">{{ pg.mangaLabel }}</div>
             </sc-if>
@@ -360,8 +365,9 @@
             <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="font-size:15px;">📜</span><span style="font-family:'Zen Maru Gothic';font-weight:900;font-size:13px;color:var(--ink,#201A17);">元の条文</span></div>
             <div style="background:#f7f2e8;border:2.5px solid var(--line,#201A17);border-radius:12px;padding:13px 14px;">
               <div style="font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;color:var(--accent,#FF6B35);">{{ curNo }} {{ curTitle }}</div>
-              <div style="font-family:'Zen Maru Gothic';font-weight:500;font-size:12.5px;color:#4a4138;line-height:1.75;margin-top:8px;">{{ curClauseText }}</div>
+              <textarea value="{{ curClauseText }}" onChange="{{ onClauseTextChange }}" placeholder="条文テキストを入力…" style="width:100%;min-height:80px;background:transparent;border:1.5px solid rgba(32,26,23,.2);border-radius:8px;padding:8px 10px;font-family:'Zen Maru Gothic';font-weight:500;font-size:12.5px;color:#4a4138;line-height:1.75;margin-top:8px;resize:vertical;outline:none;display:block;"></textarea>
             </div>
+            <div onClick="{{ syncBubblesFromClause }}" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ink,#201A17);color:#fff;border:2.5px solid var(--line,#201A17);border-radius:10px;padding:10px 14px;font-family:'Zen Maru Gothic';font-weight:900;font-size:12.5px;cursor:pointer;box-shadow:2px 2px 0 var(--line,#201A17);">🔄 吹き出しに反映する</div>
           </div>
         </sc-if>
 
@@ -466,7 +472,7 @@ class Component extends DCLogic {
       ],
       wiz:{ purpose:null, template:null, style:'shounen', fileName:null, fileClauses:0 },
       analyzing:false, analyzeDone:false, progress:0, analyzeMsg:'条文を抽出しています…',
-      active:null, activeId:null, pageIdx:0, selBubble:null, editingBubble:null,
+      active:null, activeId:null, pageIdx:0, selBubble:null, editingBubble:null, editingClauseId:null,
       showOriginal:true, layoutMode:'doc', drag:null, toast:null, styleMenuOpen:false,
     };
     this._refs = {};
@@ -686,6 +692,31 @@ class Component extends DCLogic {
   backToEdit(){ this.setState({screen:'edit'}); }
   flash(msg){ this.setState({toast:msg}); if(this._t2)clearTimeout(this._t2); this._t2=setTimeout(()=>this.setState({toast:null}),1800); }
 
+  // ---------- clause text editing ----------
+  editClause(pageId){ this.setState({editingClauseId:pageId}); }
+  blurClause(){ this.setState({editingClauseId:null}); }
+  updateClauseText(pageId, text){
+    const pages=this.state.active.pages.map(p=>p.id===pageId?{...p,clauseText:text}:p);
+    this.setState({active:{...this.state.active, pages}});
+  }
+  syncBubblesFromClause(){
+    const pg=this.curPage(); if(!pg) return;
+    const text=pg.clauseText;
+    const sents=(text.match(/[^。！？]+[。！？]?/g)||[text]).filter(s=>s.trim().length>3);
+    const get=i=>{const idx=Math.min(i,sents.length-1);return(sents[idx]||'').trim().replace(/^\d+\.\s*/,'');};
+    const newBubbles=pg.bubbles.map((b,i)=>{
+      const base=get(i); let t;
+      if(b.kind==='narration'||i===0) t=base;
+      else if(i===1) t=base.replace(/[。！？]$/,'')+'！';
+      else if(i===2) t='つまり、'+base.replace(/[。！？]$/,'')+'…';
+      else t='ポイントは、'+base.replace(/[。！？]$/,'')+'。';
+      return {...b, text:t, base:t, vi:0};
+    });
+    const pages=this.state.active.pages.map(p=>p.id===pg.id?{...p,bubbles:newBubbles}:p);
+    this.setState({active:{...this.state.active,pages}});
+    this.flash('条文テキストから吹き出しを更新しました ✓');
+  }
+
   componentDidMount(){
     this._mv=(e)=>this.onMove(e); this._up=()=>this.endDrag();
     window.addEventListener('mousemove', this._mv); window.addEventListener('mouseup', this._up);
@@ -818,6 +849,10 @@ class Component extends DCLogic {
       // canvas pages — each page is a 2x2 koma grid (4 panels) with drop-in images
       const frameStyle=`position:absolute;inset:0;border:${this.styleDef(curStyle).frame} solid var(--line,#201A17);pointer-events:none;`;
       const renderPage=(pg)=>{ const idx=a.pages.indexOf(pg); return { no:pg.no, title:pg.title, clauseText:pg.clauseText, showDocText:true,
+        editingClause:st.editingClauseId===pg.id, notEditingClause:st.editingClauseId!==pg.id,
+        onClauseEdit:()=>this.editClause(pg.id),
+        onClauseChange:(e)=>this.updateClauseText(pg.id, e.target.value),
+        onClauseBlur:()=>this.blurClause(),
         mangaLabel:isDoc?'▼ この条文をまんがで解説（クリックで編集）':'▼ この条文のまんが解説',
         mangaLabelStyle:`font-family:'Zen Maru Gothic';font-weight:900;font-size:12px;color:#fff;background:var(--accent,#FF6B35);border:2.5px solid var(--line,#201A17);border-top:none;padding:7px 14px;text-align:center;${isDoc?'cursor:pointer;':''}`,
         onJump:()=>this.setState({layoutMode:'perClause', pageIdx:idx, selBubble:null, editingBubble:null}),
@@ -854,6 +889,8 @@ class Component extends DCLogic {
       // inspector
       const cp=a.pages[st.pageIdx];
       v.curNo=cp.no; v.curTitle=cp.title; v.curClauseText=cp.clauseText;
+      v.onClauseTextChange=(e)=>this.updateClauseText(cp.id, e.target.value);
+      v.syncBubblesFromClause=()=>this.syncBubblesFromClause();
       const selB = cp.bubbles.find(b=>b.id===st.selBubble);
       v.hasSelection=!!selB; v.noSelection=!selB; v.selText=selB?selB.text:'';
       v.onSelTextChange=(e)=>this.setSelText(e.target.value);
